@@ -45,7 +45,7 @@ void gameHandler::drawGame()
     board.drawBoard();
 
     // Draw ghost block with a translucent color
-    Color ghostColor = Fade(WHITE, 0.3f); // Adjust transparency as needed
+    Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
     ghostBlock.Draw(ghostColor);
 
     currBlock.Draw();
