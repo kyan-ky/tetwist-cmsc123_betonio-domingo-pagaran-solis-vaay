@@ -32,10 +32,13 @@ class gameHandler {
         void fastDrop();
         void lockBlock();
         bool checkCollision();
+        bool checkCollision(blockMain block); // Overloaded to check collision for a specific block
+        void updateGhostBlock();             // New method to update the ghost block position
         vector<blockMain> blockSub;
         blockMain currBlock;
         blockMain nextBlock;
         blockMain heldBlock;
+        blockMain ghostBlock;                // New variable to store the ghost block
         float moveDownTimer;
         float moveDownDelay;
         float lastFrameTime;

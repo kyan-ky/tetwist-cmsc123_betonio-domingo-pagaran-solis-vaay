@@ -3,7 +3,7 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
-#include <raylib.h>
+#include "C:\\raylib\\raylib\\src\\raylib.h"
 
 using namespace std;
 
@@ -25,6 +25,7 @@ gameHandler::gameHandler() {
     gameOverFx = LoadSound("sound/gameover.wav");
     moveFx = LoadSound("sound/move.mp3");
     dropFx = LoadSound("sound/drop.mp3");
+    updateGhostBlock(); // Initialize ghost block
 }
 
 gameHandler::~gameHandler() {
@@ -34,7 +35,14 @@ gameHandler::~gameHandler() {
 
 void gameHandler::drawGame() {
     board.drawBoard();
+
+    // Draw ghost block with a translucent color
+    Color ghostColor = Fade(WHITE, 0.5f);  // Adjust transparency as needed
+    ghostBlock.Draw();
+
+    // Draw current block
     currBlock.Draw();
+
     int nextBlockX = GetScreenWidth() - 250; 
     int nextBlockY = 100; 
     switch(nextBlock.cellId) {
@@ -49,6 +57,7 @@ void gameHandler::drawGame() {
     }
     Font font = Font();
     DrawTextEx(font, (( getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
+
     if (checkGameOver) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(GRAY, 0.8f));
         DrawTextEx(font, "Game Over", {static_cast<float>(GetScreenWidth() / 2 - 150), static_cast<float>(GetScreenHeight() / 2 - 50)}, 60, 5, RED);
@@ -78,7 +87,6 @@ string gameHandler::getBlockName(int cellId) {
     }
 }
 
-
 blockMain gameHandler::getRandomBlock() {
     if (blockSub.empty()) {
         blockSub = refreshBlocks();
@@ -92,8 +100,6 @@ blockMain gameHandler::getRandomBlock() {
 vector<blockMain> gameHandler::refreshBlocks() {
     return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
 }
-
-
 
 void gameHandler::holdPiece() {
     if (!checkHoldPiece) {
@@ -140,9 +146,6 @@ void gameHandler::inputHandler() {
         case KEY_C:
             holdPiece();
             break;
-        // case KEY_BACKSPACE:
-        //     CloseWindow();
-        //     break;
     } 
 }
 
@@ -151,10 +154,13 @@ void gameHandler::updateGame() {
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
+
     if (moveDownTimer >= moveDownDelay) {
-       moveDown();
-       moveDownTimer = 0.0f;
-   }
+        moveDown();
+        moveDownTimer = 0.0f;
+    }
+
+    updateGhostBlock();  // Update ghost block position
 }
 
 void gameHandler::moveLeft() {
@@ -210,8 +216,6 @@ void gameHandler::fastDrop() {
     }
 }
 
-
-
 void gameHandler::lockBlock() {
     vector<Pos> tile = currBlock.getCellPos();
     for (Pos item : tile) {
@@ -231,14 +235,29 @@ void gameHandler::lockBlock() {
     PlaySound(dropFx);
 }
 
-bool gameHandler::checkCollision() {
-    vector<Pos> tile = currBlock.getCellPos();
+void gameHandler::updateGhostBlock() {
+    ghostBlock = currBlock;  // Copy current block
+    while (true) {
+        ghostBlock.Move(1, 0);  // Move down
+        if (checkBounds() || !checkCollision(ghostBlock)) {
+            ghostBlock.Move(-1, 0);  // Undo move
+            break;
+        }
+    }
+}
+
+bool gameHandler::checkCollision(blockMain block) {
+    vector<Pos> tile = block.getCellPos();
     for (Pos item : tile) {
         if (!board.checkCollision(item.x, item.y)) {
             return false;
         }
     }
     return true;
+}
+
+bool gameHandler::checkCollision() {
+    return checkCollision(currBlock);
 }
 
 bool gameHandler::checkBounds() {
