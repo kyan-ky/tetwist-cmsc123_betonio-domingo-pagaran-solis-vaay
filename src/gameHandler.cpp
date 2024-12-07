@@ -36,11 +36,8 @@ gameHandler::~gameHandler() {
 void gameHandler::drawGame() {
     board.drawBoard();
 
-    // Draw ghost block with a translucent color
-    Color ghostColor = Fade(WHITE, 0.5f);  // Adjust transparency as needed
-    ghostBlock.Draw();
-
-    // Draw current block
+    ghostBlock.ghostDraw();
+    
     currBlock.Draw();
 
     int nextBlockX = GetScreenWidth() - 250; 
@@ -160,7 +157,7 @@ void gameHandler::updateGame() {
         moveDownTimer = 0.0f;
     }
 
-    updateGhostBlock();  // Update ghost block position
+    updateGhostBlock(); 
 }
 
 void gameHandler::moveLeft() {

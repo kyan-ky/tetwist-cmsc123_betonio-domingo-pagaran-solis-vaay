@@ -21,6 +21,18 @@ void blockMain::Draw() {
     }
 }
 
+void blockMain::ghostDraw() {
+    vector<Pos> tile = getCellPos();
+    int startX = (GetScreenWidth() - 10 * cellSz) / 2; 
+    int startY = (GetScreenHeight() - 20 * cellSz) / 2;
+
+    Color fadedWhite = Fade(white, 0.5f); 
+    
+    for (Pos item : tile) {
+        DrawRectangle(startX + item.y * cellSz + 1, startY + item.x * cellSz + 1, cellSz - 1, cellSz - 1, fadedWhite);
+    }
+}
+
 void blockMain::DrawAt(int x, int y) {
     vector<Pos> tile = getCellPos();
     for (Pos item: tile) {
