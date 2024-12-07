@@ -1,10 +1,11 @@
 #pragma once
+#include <raylib.h>
 #include <vector>
-#include "C:\raylib\raylib\src\raylib.h"
 
 using namespace std;
 
-class Board {
+class Board
+{
 public:
     Board();
     void Initialize();
@@ -14,6 +15,7 @@ public:
     bool checkCollision(int x, int y);
     int clearLineAll();
     int board[20][10];
+
 private:
     bool checkLine(int x);
     void clearLine(int x);

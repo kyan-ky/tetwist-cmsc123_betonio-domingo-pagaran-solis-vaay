@@ -1,7 +1,8 @@
-#include "C:\raylib\raylib\src\raylib.h"
+#include <raylib.h>
 #include "gameHandler.h"
 
-int main() {
+int main()
+{
     Color bgBlack = Color{53, 56, 57, 255};
     const int screenWidth = 800;
     const int screenHeight = 600;
@@ -13,30 +14,38 @@ int main() {
 
     Texture2D gif = LoadTexture("tetris.gif");
     gameHandler game = gameHandler();
-    
-    while (!titleScreenDisplayed) {
-        DrawTexture(gif, screenWidth/2 - gif.width/2, screenHeight/2 - gif.height/2 - 100, WHITE);
+
+    while (!titleScreenDisplayed)
+    {
+        DrawTexture(gif, screenWidth / 2 - gif.width / 2, screenHeight / 2 - gif.height / 2 - 100, WHITE);
         DrawText("Press ENTER to start the game.", 60, 320, 40, YELLOW);
         DrawText("Press BACKSPACE to quit.", 120, 400, 40, RED);
-        if (IsKeyPressed(KEY_ENTER)) {
+        if (IsKeyPressed(KEY_ENTER))
+        {
             titleScreenDisplayed = true;
-        } 
-        if (IsKeyPressed(KEY_BACKSPACE)) {
+        }
+        if (IsKeyPressed(KEY_BACKSPACE))
+        {
             CloseWindow();
             return 0;
-        } 
+        }
         BeginDrawing();
         ClearBackground(bgBlack);
         EndDrawing();
     }
-    
-    while (!WindowShouldClose()) {
-        if (!IsWindowFocused()) {
+
+    while (!WindowShouldClose())
+    {
+        if (!IsWindowFocused())
+        {
             isGamePaused = true;
-        } else {
+        }
+        else
+        {
             isGamePaused = false;
         }
-        if (!isGamePaused) {
+        if (!isGamePaused)
+        {
             UpdateMusicStream(game.music);
             game.inputHandler();
             game.updateGame();
@@ -63,6 +72,6 @@ int main() {
         game.drawGame();
         EndDrawing();
     }
-    CloseWindow();  
+    CloseWindow();
     return 0;
 }
