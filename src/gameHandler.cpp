@@ -3,6 +3,7 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
+#include "C:\\raylib\\raylib\\src\\raylib.h"
 
 using namespace std;
 
