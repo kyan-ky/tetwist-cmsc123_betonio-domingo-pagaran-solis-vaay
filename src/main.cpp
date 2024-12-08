@@ -1,4 +1,3 @@
-#include <raylib.h>
 #include "gameHandler.h"
 
 int main()
