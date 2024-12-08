@@ -36,6 +36,11 @@ gameHandler::gameHandler()
 
 >>>>>>> 00dee73 (changed the color)
     updateGhostBlock(); // Initialize ghost block
+
+    moveDelay = 0.08f; // Delay in seconds (0.2 default)
+    lastMoveTime = 0.0f;
+
+    canHoldPiece = true;
 }
 
 gameHandler::~gameHandler()
@@ -198,6 +203,7 @@ void gameHandler::updateGame()
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
+
     if (moveDownTimer >= moveDownDelay)
     {
         moveDown();
