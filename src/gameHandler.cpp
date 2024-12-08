@@ -31,6 +31,8 @@ gameHandler::gameHandler()
     lastMoveTime = 0.0f;
 
     canHoldPiece = true;
+
+    updateGhostBlock(); // Initialize ghost block
 }
 
 gameHandler::~gameHandler()
