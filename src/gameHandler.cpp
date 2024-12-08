@@ -209,7 +209,7 @@ void gameHandler::updateGame()
         moveDownTimer = 0.0f;
     }
 
-    updateGhostBlock();
+    updateGhostBlock(); // Update ghost block position
 }
 
 void gameHandler::moveLeft()
