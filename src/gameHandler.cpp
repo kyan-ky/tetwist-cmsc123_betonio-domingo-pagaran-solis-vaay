@@ -31,6 +31,10 @@ gameHandler::gameHandler()
     lastMoveTime = 0.0f;
 
     canHoldPiece = true;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 00dee73 (changed the color)
     updateGhostBlock(); // Initialize ghost block
 }
 
@@ -199,6 +203,8 @@ void gameHandler::updateGame()
         moveDown();
         moveDownTimer = 0.0f;
     }
+
+    updateGhostBlock();
 }
 
 void gameHandler::moveLeft()
