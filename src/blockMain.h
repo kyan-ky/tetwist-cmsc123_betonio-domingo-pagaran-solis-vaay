@@ -14,6 +14,7 @@ public:
     blockMain();
     void Draw();
     void ghostDraw();
+    void Draw(Color);
     void DrawAt(int x, int y);
     void Move(int x, int y);
     vector<Pos> getCellPos();
