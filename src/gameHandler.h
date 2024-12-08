@@ -49,9 +49,8 @@ private:
     Sound moveFx;
     Sound dropFx;
     Sound gameOverFx;
-
     float moveDelay; // Delay between key repeats
     float lastMoveTime;
-
+    bool useFirstRange = true;
     bool canHoldPiece;
 };

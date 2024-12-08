@@ -28,7 +28,7 @@ gameHandler::gameHandler()
   
     moveDelay = 0.08f; // Delay in seconds (0.2 default)
     lastMoveTime = 0.0f;
-
+    useFirstRange = true;
     canHoldPiece = true;
   
     updateGhostBlock(); // Initialize ghost block
@@ -43,9 +43,8 @@ gameHandler::~gameHandler()
 void gameHandler::drawGame()
 {
     board.drawBoard();
-
     // Draw ghost block with a translucent color
-    Color ghostColor = Fade(WHITE, 0.5f);  // Adjust transparency as needed
+    Color ghostColor = Fade(lightgray, 0.5f);  // Adjust transparency as needed
     ghostBlock.Draw();
 
     // Draw current block
@@ -138,7 +137,7 @@ void gameHandler::holdPiece()
         swap(currBlock, heldBlock);
     }
 
-    currBlock.resetPosition(0, 0); // Reset the position of the new current block
+    currBlock.resetPosition(); // Reset the position of the new current block
     canHoldPiece = false;          // Disable holding until the next block is placed
 }
 
@@ -184,6 +183,7 @@ void gameHandler::inputHandler()
     }
     if (IsKeyPressed(KEY_C))
     {
+        heldBlock.resetPosition();
         holdPiece();
     }
 
@@ -199,6 +199,7 @@ void gameHandler::updateGame()
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
+    
     if (moveDownTimer >= moveDownDelay)
     {
         moveDown();
@@ -300,6 +301,18 @@ void gameHandler::lockBlock()
 
     canHoldPiece = true;
     PlaySound(dropFx);
+    
+    float minDelay, maxDelay;
+    if (useFirstRange) {
+        minDelay = 0.1f;
+        maxDelay = 0.3f;
+    } else {
+        minDelay = 0.7f;
+        maxDelay = 0.9f;
+    }
+    moveDownDelay = minDelay + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(maxDelay-minDelay)));
+    
+    useFirstRange = !useFirstRange;
 }
 
 void gameHandler::updateGhostBlock() {
@@ -322,7 +335,6 @@ bool gameHandler::checkCollision(blockMain block) {
     }
     return true;
 }
-
 
 bool gameHandler::checkCollision() {
     return checkCollision(currBlock);

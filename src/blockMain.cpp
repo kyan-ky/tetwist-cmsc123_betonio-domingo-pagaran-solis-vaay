@@ -57,9 +57,13 @@ void blockMain::rotateUndo() {
     }
 }
 
-void blockMain::resetPosition(int x, int y) {
-    x = (GetScreenWidth() - 10 * cellSz) / 2; 
-    y = (GetScreenHeight() - 20 * cellSz) / 2; 
+void blockMain::resetPosition() {
+    vector<Pos> tile = getCellPos();
+    int startX = (GetScreenWidth() - 10 * cellSz) / 2; 
+    int startY = (GetScreenHeight() - 20 * cellSz) / 2; 
+    for (Pos item: tile) {
+        DrawRectangle(startX + item.y * cellSz + 1, startY + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
+    }
 }
 
 //     vector<Pos> tile = getCellPos();
