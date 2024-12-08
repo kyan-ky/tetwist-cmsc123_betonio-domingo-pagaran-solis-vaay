@@ -35,6 +35,11 @@ gameHandler::gameHandler()
     canHoldPiece = true;
 
     updateGhostBlock(); // Initialize ghost block
+
+    moveDelay = 0.08f; // Delay in seconds (0.2 default)
+    lastMoveTime = 0.0f;
+
+    canHoldPiece = true;
 }
 
 gameHandler::~gameHandler()
