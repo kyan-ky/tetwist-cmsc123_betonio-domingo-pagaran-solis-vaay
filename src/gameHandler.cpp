@@ -26,19 +26,12 @@ gameHandler::gameHandler()
     moveFx = LoadSound("sound/move.mp3");
     dropFx = LoadSound("sound/drop.mp3");
 
-    updateGhostBlock(); // Initialize ghost block
-
     moveDelay = 0.08f; // Delay in seconds (0.2 default)
     lastMoveTime = 0.0f;
 
     canHoldPiece = true;
 
-    updateGhostBlock(); // Initialize ghost block
-
-    moveDelay = 0.08f; // Delay in seconds (0.2 default)
-    lastMoveTime = 0.0f;
-
-    canHoldPiece = true;
+    updateGhostBlock();
 }
 
 gameHandler::~gameHandler()
@@ -201,14 +194,11 @@ void gameHandler::updateGame()
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
-
     if (moveDownTimer >= moveDownDelay)
     {
         moveDown();
         moveDownTimer = 0.0f;
     }
-
-    updateGhostBlock(); // Update ghost block position
 }
 
 void gameHandler::moveLeft()
