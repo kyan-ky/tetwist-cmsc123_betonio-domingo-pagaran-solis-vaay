@@ -1,6 +1,6 @@
 #pragma once
+#include <raylib.h>
 #include <vector>
-#include "C:\raylib\raylib\src\raylib.h"
 
 using namespace std;
 
