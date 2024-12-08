@@ -25,12 +25,6 @@ gameHandler::gameHandler()
     gameOverFx = LoadSound("sound/gameover.wav");
     moveFx = LoadSound("sound/move.mp3");
     dropFx = LoadSound("sound/drop.mp3");
-
-    moveDelay = 0.08f; // Delay in seconds (0.2 default)
-    lastMoveTime = 0.0f;
-
-    canHoldPiece = true;
-
     updateGhostBlock(); // Initialize ghost block
 
     moveDelay = 0.08f; // Delay in seconds (0.2 default)
@@ -206,7 +200,7 @@ void gameHandler::updateGame()
         moveDownTimer = 0.0f;
     }
 
-    updateGhostBlock(); // Update ghost block position
+    updateGhostBlock();
 }
 
 void gameHandler::moveLeft()
