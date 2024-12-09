@@ -102,7 +102,7 @@ void gameHandler::drawGame()
             thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
     }
 
-    Font font = Font();
+    Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf"); // Ensure you provide a valid font path
     DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
     if (checkGameOver)
     {
@@ -137,14 +137,14 @@ string gameHandler::getBlockName(int cellId)
     }
 }
 
-
-
-blockMain gameHandler::getCurrentBlock(){
+blockMain gameHandler::getCurrentBlock()
+{
     if(nextBlocks.empty()){
         nextBlocks = getRandomBlockQueue();
     }
-    return currBlock;
+    return nextBlocks.front();
 }
+
 blockMain gameHandler::getRandomBlock()
 {
     if (blockSub.empty())
