@@ -11,6 +11,10 @@ Board::Board()
     cellSz = 30;
     Initialize();
     color = getCellColor();
+    bombTimer = 0.0f;
+    bombInterval = 5.0f; // Bomb plants every 5 seconds
+    bombRow = -1;        // No bomb row initially
+    bombPlanted = false; 
 }
 
 void Board::Initialize()
@@ -55,15 +59,31 @@ void Board::drawBoard()
         for (int j = 0; j < cols; j++)
         {
             DrawRectangle(startX + j * cellSz + 1, startY + i * cellSz + 1, cellSz - 1, cellSz - 1, color[board[i][j]]);
-                if (i == bombRow) {
-            DrawRectangle(startX, startY + i * cellSz, cols * cellSz, cellSz, RED); // Highlight the bomb row
-    }
+        if (bombPlanted && i == bombRow) {
+    DrawRectangle(startX, startY + i * cellSz, cols * cellSz, cellSz, RED); // Highlight the bomb row
+}
+
         }
     }
 }
-void Board::clearBombRow(int row) {
-    if (row >= 0 && row < rows) {
-        clearLine(row); // Use the existing clearLine method
+void Board::plantBombAndClear() {
+    int bombRow = rand() % rows; // Select a random row
+    if (bombRow >= 0 && bombRow < rows) {
+        clearLine(bombRow); // Use the existing clearLine method to clear the row
+        // Optional: Add visual or audio feedback
+        cout << "Bomb detonated at row: " << bombRow << endl;
+    }
+}
+void Board::updateBomb(float deltaTime)
+{
+    bombTimer += deltaTime;
+
+    if (bombTimer >= bombInterval) {
+        bombTimer = 0.0f;
+        bombRow = rand() % rows; // Select a random row for the bomb
+        bombPlanted = true;
+        clearLine(bombRow);      // Clear the bomb row immediately
+        PlaySound(LoadSound("sound/bomb_explosion.mp3")); // Optional: Explosion sound
     }
 }
 
@@ -113,11 +133,24 @@ int Board::clearLineAll()
 
 void Board::clearLine(int x)
 {
-    for (int i = 0; i < cols; i++)
-    {
+    // Clear the specified row
+    for (int i = 0; i < cols; i++) {
         board[x][i] = 0;
     }
+
+    // Shift all rows above the cleared row down
+    for (int row = x; row > 0; row--) {
+        for (int col = 0; col < cols; col++) {
+            board[row][col] = board[row - 1][col];
+        }
+    }
+
+    // Clear the topmost row (which has been shifted down)
+    for (int col = 0; col < cols; col++) {
+        board[0][col] = 0;
+    }
 }
+
 
 void Board::moveLineDown(int x, int rows)
 {

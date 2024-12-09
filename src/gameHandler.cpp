@@ -216,19 +216,20 @@ void gameHandler::updateGame()
 bombTimer += deltaTime;
 
 // Plant a bomb if the interval has elapsed
-if (bombTimer >= bombInterval) {
+if (bombTimer >= 5.0f) {
     bombTimer = 0.0f;
     bombPlanted = true;
-    bombRow = rand() % board.rows; // Random row for the bomb
+ // Random row for the bomb
     // PlaySound(LoadSound("sound/bomb_plant.mp3")); 
 }
 
 // If a bomb is planted, detonate and clear the row
 if (bombPlanted) {
     bombPlanted = false;
-    board.clearBombRow(bombRow); // Clear the row affected by the bomb
-    // PlaySound(LoadSound("sound/bomb_explosion.mp3")); 
+    board.plantBombAndClear(); // Let the Board class handle the bomb logic
+    // PlaySound(LoadSound("sound/bomb_explosion.mp3")); // Optional: Explosion sound
 }
+
 }
 
 void gameHandler::moveLeft()

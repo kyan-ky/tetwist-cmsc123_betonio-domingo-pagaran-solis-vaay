@@ -15,14 +15,18 @@ public:
     bool checkCollision(int x, int y);
     int clearLineAll();
     int board[20][10];
-    void clearBombRow(int x);
-    int rows;
+    void plantBombAndClear();
+    void updateBomb(float deltaTime);
 private:
     bool checkLine(int x);
     void clearLine(int x);
     void moveLineDown(int x, int rows);
-
+    int rows;
     int cols;
     int cellSz;
     vector<Color> color;
+    float bombTimer;      // Timer for the bomb planting interval
+    float bombInterval;   // Time interval for planting a bomb
+    int bombRow;          // Row affected by the bomb
+    bool bombPlanted;
 };
