@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include <vector>
 
 using namespace std;
@@ -15,12 +15,13 @@ public:
     bool checkCollision(int x, int y);
     int clearLineAll();
     int board[20][10];
-
+    void clearBombRow(int x);
+    int rows;
 private:
     bool checkLine(int x);
     void clearLine(int x);
     void moveLineDown(int x, int rows);
-    int rows;
+
     int cols;
     int cellSz;
     vector<Color> color;

@@ -32,6 +32,10 @@ gameHandler::gameHandler()
     canHoldPiece = true;
 
     updateGhostBlock(); // Initialize ghost block
+    float bombTimer = 0.0f;
+    float bombInterval = 10.0f; // Example: Bomb spawns every 10 seconds
+    bool bombPlanted = false;
+    int bombRow = -1; // Row affected by the bomb
 }
 
 gameHandler::~gameHandler()
@@ -208,6 +212,23 @@ void gameHandler::updateGame()
 
         updateGhostBlock(); // Update ghost block position
     }
+    // Update the bomb timer
+bombTimer += deltaTime;
+
+// Plant a bomb if the interval has elapsed
+if (bombTimer >= bombInterval) {
+    bombTimer = 0.0f;
+    bombPlanted = true;
+    bombRow = rand() % board.rows; // Random row for the bomb
+    // PlaySound(LoadSound("sound/bomb_plant.mp3")); 
+}
+
+// If a bomb is planted, detonate and clear the row
+if (bombPlanted) {
+    bombPlanted = false;
+    board.clearBombRow(bombRow); // Clear the row affected by the bomb
+    // PlaySound(LoadSound("sound/bomb_explosion.mp3")); 
+}
 }
 
 void gameHandler::moveLeft()

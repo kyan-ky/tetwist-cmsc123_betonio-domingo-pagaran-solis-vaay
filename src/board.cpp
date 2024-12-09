@@ -38,6 +38,7 @@ void Board::displayPrint()
 
 void Board::drawBoard()
 {
+    int bombRow = rand() % rows;
     int startX = (GetScreenWidth() - cols * cellSz) / 2;
     int startY = (GetScreenHeight() - rows * cellSz) / 2;
     int borderWidth = 20;
@@ -54,7 +55,15 @@ void Board::drawBoard()
         for (int j = 0; j < cols; j++)
         {
             DrawRectangle(startX + j * cellSz + 1, startY + i * cellSz + 1, cellSz - 1, cellSz - 1, color[board[i][j]]);
+                if (i == bombRow) {
+            DrawRectangle(startX, startY + i * cellSz, cols * cellSz, cellSz, RED); // Highlight the bomb row
+    }
         }
+    }
+}
+void Board::clearBombRow(int row) {
+    if (row >= 0 && row < rows) {
+        clearLine(row); // Use the existing clearLine method
     }
 }
 

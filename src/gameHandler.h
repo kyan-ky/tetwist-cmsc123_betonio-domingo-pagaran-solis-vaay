@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include "board.h"
 #include "blockSub.cpp"
 #include <string>
@@ -54,4 +54,8 @@ private:
     float lastMoveTime;
 
     bool canHoldPiece;
+    float bombTimer;     // Timer for the bomb planting interval
+    float bombInterval;  // Interval for bomb planting
+    bool bombPlanted;    // Whether a bomb is currently planted
+    int bombRow;         // The row affected by the bomb
 };
