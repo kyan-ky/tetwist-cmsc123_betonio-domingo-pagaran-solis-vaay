@@ -11,11 +11,11 @@ int main()
     InitWindow(screenWidth, screenHeight, "Te-Twist");
     SetTargetFPS(60);
 
-    Texture2D bgMoon = LoadTexture("../assets/parallax-mountain-bg.png");
-    Texture2D bgFgTrees = LoadTexture("../assets/parallax-mountain-foreground-trees.png");
-    Texture2D bgmountainFar = LoadTexture("../assets/parallax-mountain-montain-far.png");
-    Texture2D bgmountainNear = LoadTexture("../assets/parallax-mountain-mountains.png");
-    Texture2D bgDarkTrees = LoadTexture("../assets/parallax-mountain-trees.png");
+    Texture2D bgMoon = LoadTexture("assets/parallax-mountain-bg.png");
+    Texture2D bgFgTrees = LoadTexture("assets/parallax-mountain-foreground-trees.png");
+    Texture2D bgmountainFar = LoadTexture("assets/parallax-mountain-montain-far.png");
+    Texture2D bgmountainNear = LoadTexture("assets/parallax-mountain-mountains.png");
+    Texture2D bgDarkTrees = LoadTexture("assets/parallax-mountain-trees.png");
 
     Texture2D gif = LoadTexture("tetris.gif");
     gameHandler game = gameHandler();
@@ -25,11 +25,6 @@ int main()
     float scrollingMountainNear = 0.0f;
     float scrollingDarkTrees = 0.0f;
     float scrollingForegroundTrees = 0.0f;
-
-
-    while (!titleScreenDisplayed) {
-        DrawTexture(gif, screenWidth/2 - gif.width/2, screenHeight/2 - gif.height/2 - 100, WHITE);
-
 
     while (!titleScreenDisplayed)
     {
@@ -99,7 +94,7 @@ int main()
         //DrawTextureEx(bgTexture, (Vector2){bgX + bgTexture.width * scaleX, 0.0f}, 0.0f, scaleX, WHITE);
 
 
-        Font font = Font();
+        Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
         DrawRectangle(GetScreenWidth() - 200, 70, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 210, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 350, 160, 120, black);
@@ -128,9 +123,7 @@ int main()
     UnloadTexture(bgDarkTrees);
     UnloadTexture(bgFgTrees);
 
-
     CloseWindow();  
-    CloseWindow();
 
     return 0;
 }

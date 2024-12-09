@@ -1,3 +1,7 @@
-./**.exe
-./src/**.exe
+*.exe
+src/*.exe
+
 tetwist
+tet
+src/tet
+src/tetwist
