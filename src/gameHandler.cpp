@@ -3,6 +3,10 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
+#include <raylib.h>
+#include <deque>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -10,8 +14,12 @@ gameHandler::gameHandler()
 {
     board = Board();
     blockSub = {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
-    currBlock = getRandomBlock();
-    nextBlock = getRandomBlock();
+    deque<blockMain> nextBlocks = getRandomBlockQueue();
+    currBlock = getCurrentBlock();
+    nextBlock = getNextBlock();
+    secondIndex = 0;
+    secondBlock = getSecondBlock();
+    thirdBlock = getThirdBlock();
     checkGameOver = false;
     checkHoldPiece = false;
     score = 0;
@@ -44,6 +52,25 @@ void gameHandler::drawGame()
 {
     board.drawBoard();
 
+   
+    if(nextBlocks.empty()){
+        cout << "queue empty" << endl;
+    }
+    currBlock.Draw();
+   
+    int nextBlockX = GetScreenWidth() - 250; 
+    int nextBlockY = 100; 
+    switch(nextBlock.cellId) {
+        case 3:
+            nextBlock.DrawAt(nextBlockX-20, nextBlockY+20);
+            break;
+        case 6:
+            nextBlock.DrawAt(nextBlockX-20, nextBlockY+10);
+            break;
+        default:
+
+           nextBlock.DrawAt(nextBlockX, nextBlockY);
+
     // Draw ghost block with a translucent color
     Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
     ghostBlock.Draw(ghostColor);
@@ -62,6 +89,33 @@ void gameHandler::drawGame()
     default:
         nextBlock.DrawAt(nextBlockX, nextBlockY);
     }
+
+    int secondBlockX = GetScreenWidth() - 250;
+    int secondBlockY = 240;
+    switch(secondBlock.cellId){
+        case 3:
+            secondBlock.DrawAt(secondBlockX-20, secondBlockY+20);
+            break;
+        case 6:
+            secondBlock.DrawAt(secondBlockX-20, secondBlockY+10);
+            break;
+        default:
+            secondBlock.DrawAt(secondBlockX, secondBlockY);
+    }
+
+    int thirdBlockX = GetScreenWidth() - 250;
+    int thirdBlockY = 370;
+    switch(thirdBlock.cellId){
+        case 3:
+            thirdBlock.DrawAt(thirdBlockX-20, thirdBlockY+20);
+            break;
+        case 6:
+            thirdBlock.DrawAt(thirdBlockX-20, thirdBlockY+10);
+            break;
+        default:
+            thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
+    }
+
     Font font = Font();
     DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
     if (checkGameOver)
@@ -71,6 +125,7 @@ void gameHandler::drawGame()
         DrawTextEx(font, "Press ENTER to Play Again", {static_cast<float>(GetScreenWidth() / 2 - 280), static_cast<float>(GetScreenHeight() / 2 + 100)}, 40, 5, YELLOW);
         StopMusicStream(music);
     }
+    
 }
 
 string gameHandler::getBlockName(int cellId)
@@ -96,16 +151,70 @@ string gameHandler::getBlockName(int cellId)
     }
 }
 
+
+
+blockMain gameHandler::getCurrentBlock(){
+    if(nextBlocks.empty()){
+        nextBlocks = getRandomBlockQueue();
 blockMain gameHandler::getRandomBlock()
 {
     if (blockSub.empty())
     {
         blockSub = refreshBlocks();
     }
-    int random = rand() % blockSub.size();
-    blockMain randomBlock = blockSub[random];
-    blockSub.erase(blockSub.begin() + random);
-    return randomBlock;
+    cout << "current popped" << endl;
+    blockMain currBlock = nextBlocks.front();
+    nextBlocks.pop_front();
+    return currBlock;
+}
+
+blockMain gameHandler::getNextBlock(){
+    if(nextBlocks.empty()){
+        nextBlocks = getRandomBlockQueue(); 
+    }
+
+    if(secondIndex >= 6){
+        secondIndex = 0;
+    }
+    
+    cout << "nextblock pop" << endl;
+    blockMain next = nextBlocks.front();
+    nextBlocks.pop_front();
+    
+    return next;
+}
+
+blockMain gameHandler::getSecondBlock(){
+    if(nextBlocks.empty()){
+        nextBlocks = getRandomBlockQueue();
+    }
+
+    blockMain s = nextBlocks.front();
+    return s;
+
+}
+
+blockMain gameHandler::getThirdBlock(){
+    if(nextBlocks.size() <= 1){
+        nextBlocks = getRandomBlockQueue();
+    }
+    blockMain third = nextBlocks.at(1);
+
+    return third;
+}
+
+deque<blockMain> gameHandler::getRandomBlockQueue() {
+    deque<blockMain> blocks;
+    
+    random_device rd;
+    mt19937 g(rd());
+
+    shuffle(blockSub.begin(), blockSub.end(), g);
+    for(int i =0; i < 7; i++){
+        blocks.emplace_back(blockSub[i]);
+    }
+    
+    return blocks;
 }
 
 vector<blockMain> gameHandler::refreshBlocks()
@@ -121,6 +230,13 @@ void gameHandler::holdPiece()
         return;
     }
 
+void gameHandler::holdPiece() {
+    if (!checkHoldPiece) {
+        heldBlock = currBlock;
+        currBlock = nextBlock;
+        nextBlock = getNextBlock();
+        currBlock.resetPosition(0, 0);
+        checkHoldPiece = true;
     if (!checkHoldPiece)
     {
         // First time holding a piece
@@ -292,7 +408,12 @@ void gameHandler::lockBlock()
         checkGameOver = true;
         PlaySound(gameOverFx);
     }
-    nextBlock = getRandomBlock();
+
+    nextBlock = getNextBlock();
+    secondBlock = getSecondBlock();
+    thirdBlock = getThirdBlock();
+
+
     int linesCleared = board.clearLineAll();
     if (linesCleared > 0)
     {
@@ -354,8 +475,9 @@ void gameHandler::Reset()
 {
     board.Initialize();
     blockSub = refreshBlocks();
-    currBlock = getRandomBlock();
-    nextBlock = getRandomBlock();
+    deque <blockMain> nextBlocks = getRandomBlockQueue();
+    currBlock = getCurrentBlock();
+    nextBlock = getNextBlock();
     checkGameOver = false;
     checkHoldPiece = false;
     heldBlock = blockMain();
