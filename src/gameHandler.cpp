@@ -10,7 +10,8 @@
 
 using namespace std;
 
-gameHandler::gameHandler() {
+gameHandler::gameHandler()
+{
     board = Board();
     blockSub = {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
     deque<blockMain> nextBlocks = getRandomBlockQueue();
@@ -32,15 +33,25 @@ gameHandler::gameHandler() {
     gameOverFx = LoadSound("sound/gameover.wav");
     moveFx = LoadSound("sound/move.mp3");
     dropFx = LoadSound("sound/drop.mp3");
+
+    moveDelay = 0.08f; // Delay in seconds (0.2 default)
+    lastMoveTime = 0.0f;
+
+    canHoldPiece = true;
+
+    updateGhostBlock(); // Initialize ghost block
 }
 
-gameHandler::~gameHandler() {
+gameHandler::~gameHandler()
+{
     UnloadMusicStream(music);
     CloseAudioDevice();
 }
 
-void gameHandler::drawGame() {
+void gameHandler::drawGame()
+{
     board.drawBoard();
+
    
     if(nextBlocks.empty()){
         cout << "queue empty" << endl;
@@ -57,7 +68,26 @@ void gameHandler::drawGame() {
             nextBlock.DrawAt(nextBlockX-20, nextBlockY+10);
             break;
         default:
-            nextBlock.DrawAt(nextBlockX, nextBlockY);
+
+           nextBlock.DrawAt(nextBlockX, nextBlockY);
+
+    // Draw ghost block with a translucent color
+    Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
+    ghostBlock.Draw(ghostColor);
+
+    currBlock.Draw();
+    int nextBlockX = GetScreenWidth() - 250;
+    int nextBlockY = 100;
+    switch (nextBlock.cellId)
+    {
+    case 3:
+        nextBlock.DrawAt(nextBlockX - 20, nextBlockY + 20);
+        break;
+    case 6:
+        nextBlock.DrawAt(nextBlockX - 20, nextBlockY + 10);
+        break;
+    default:
+        nextBlock.DrawAt(nextBlockX, nextBlockY);
     }
 
     int secondBlockX = GetScreenWidth() - 250;
@@ -87,8 +117,9 @@ void gameHandler::drawGame() {
     }
 
     Font font = Font();
-    DrawTextEx(font, (( getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
-    if (checkGameOver) {
+    DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
+    if (checkGameOver)
+    {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(GRAY, 0.8f));
         DrawTextEx(font, "Game Over", {static_cast<float>(GetScreenWidth() / 2 - 150), static_cast<float>(GetScreenHeight() / 2 - 50)}, 60, 5, RED);
         DrawTextEx(font, "Press ENTER to Play Again", {static_cast<float>(GetScreenWidth() / 2 - 280), static_cast<float>(GetScreenHeight() / 2 + 100)}, 40, 5, YELLOW);
@@ -97,31 +128,39 @@ void gameHandler::drawGame() {
     
 }
 
-string gameHandler::getBlockName(int cellId) {
-    switch(cellId) {
-        case 1:
-            return "Block J";
-        case 2:
-            return "Block L";
-        case 3:
-            return "Block I";
-        case 4:
-            return "Block S";
-        case 5:
-            return "Block Z";
-        case 6:
-            return "Block O";
-        case 7:
-            return "Block T";
-        default:
-            return "None";
+string gameHandler::getBlockName(int cellId)
+{
+    switch (cellId)
+    {
+    case 1:
+        return "Block J";
+    case 2:
+        return "Block L";
+    case 3:
+        return "Block I";
+    case 4:
+        return "Block S";
+    case 5:
+        return "Block Z";
+    case 6:
+        return "Block O";
+    case 7:
+        return "Block T";
+    default:
+        return "None";
     }
 }
+
 
 
 blockMain gameHandler::getCurrentBlock(){
     if(nextBlocks.empty()){
         nextBlocks = getRandomBlockQueue();
+blockMain gameHandler::getRandomBlock()
+{
+    if (blockSub.empty())
+    {
+        blockSub = refreshBlocks();
     }
     cout << "current popped" << endl;
     blockMain currBlock = nextBlocks.front();
@@ -178,10 +217,18 @@ deque<blockMain> gameHandler::getRandomBlockQueue() {
     return blocks;
 }
 
-vector<blockMain> gameHandler::refreshBlocks() {
+vector<blockMain> gameHandler::refreshBlocks()
+{
     return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
 }
 
+void gameHandler::holdPiece()
+{
+    if (!canHoldPiece)
+    {
+        // Prevent holding twice in succession
+        return;
+    }
 
 void gameHandler::holdPiece() {
     if (!checkHoldPiece) {
@@ -190,106 +237,156 @@ void gameHandler::holdPiece() {
         nextBlock = getNextBlock();
         currBlock.resetPosition(0, 0);
         checkHoldPiece = true;
+    if (!checkHoldPiece)
+    {
+        // First time holding a piece
+        heldBlock = currBlock;        // Move the current block to the hold
+        currBlock = nextBlock;        // Replace current block with the next block
+        nextBlock = getRandomBlock(); // Generate a new next block
+        checkHoldPiece = true;        // Mark that a piece has been held
     }
-    else {
-        blockMain temp = currBlock;  
-        currBlock = heldBlock;
-        heldBlock = temp;
-        currBlock.resetPosition(0, 0);  
+    else
+    {
+        // Swap held block with the current block
+        swap(currBlock, heldBlock);
     }
-    currBlock.resetPosition(0, 0);
+
+    currBlock.resetPosition(0, 0); // Reset the position of the new current block
+    canHoldPiece = false;          // Disable holding until the next block is placed
 }
 
-void gameHandler::inputHandler() {
-    int input = GetKeyPressed();
-    if (checkGameOver) {
-        if (input == KEY_ENTER) {
+void gameHandler::inputHandler()
+{
+    if (checkGameOver)
+    {
+        if (IsKeyPressed(KEY_ENTER))
+        { // Use IsKeyPressed for single press events
             checkGameOver = false;
             Reset();
         }
         return;
     }
-    switch (input) {
-        case KEY_LEFT:
-            moveLeft();
-            break;
-        case KEY_RIGHT:
-            moveRight();
-            break;
-        case KEY_DOWN:
-            moveDown();
-            break;
-        case KEY_UP:
-            rotateBlock();
-            break;
-        case KEY_SPACE:
-            fastDrop();
-            break;
-        case KEY_C:
-            holdPiece();
-            break;
-        // case KEY_BACKSPACE:
-        //     CloseWindow();
-        //     break;
-    } 
+
+    float currentTime = GetTime();
+
+    // Continuous movement for long presses
+    if (IsKeyDown(KEY_LEFT) && (currentTime - lastMoveTime > moveDelay))
+    {
+        moveLeft();
+        lastMoveTime = currentTime;
+        updateGhostBlock();
+    }
+    if (IsKeyDown(KEY_RIGHT) && (currentTime - lastMoveTime > moveDelay))
+    {
+        moveRight();
+        lastMoveTime = currentTime;
+        updateGhostBlock();
+    }
+    if (IsKeyDown(KEY_DOWN) && (currentTime - lastMoveTime > moveDelay))
+    {
+        moveDown();
+        lastMoveTime = currentTime;
+        updateGhostBlock();
+    }
+
+    // Actions triggered by single press
+    if (IsKeyPressed(KEY_UP))
+    {
+        rotateBlock();
+        updateGhostBlock();
+    }
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        fastDrop();
+        updateGhostBlock();
+    }
+    if (IsKeyPressed(KEY_C))
+    {
+        holdPiece();
+    }
+
+    // Uncomment if you want to use backspace to exit the game
+    // if (IsKeyPressed(KEY_BACKSPACE)) {
+    //     CloseWindow();
+    // }
 }
 
-void gameHandler::updateGame() {
+void gameHandler::updateGame()
+{
     float currentTime = GetTime();
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
-    if (moveDownTimer >= moveDownDelay) {
-       moveDown();
-       moveDownTimer = 0.0f;
-   }
+    if (moveDownTimer >= moveDownDelay)
+    {
+        moveDown();
+        moveDownTimer = 0.0f;
+
+        updateGhostBlock(); // Update ghost block position
+    }
 }
 
-void gameHandler::moveLeft() {
-    if (!checkGameOver) {
+void gameHandler::moveLeft()
+{
+    if (!checkGameOver)
+    {
         currBlock.Move(0, -1);
-        if (checkBounds() || checkCollision() == false) {
+        if (checkBounds() || checkCollision() == false)
+        {
             currBlock.Move(0, 1);
         }
     }
     PlaySound(moveFx);
 }
 
-void gameHandler::moveRight() {
-    if (!checkGameOver) {
+void gameHandler::moveRight()
+{
+    if (!checkGameOver)
+    {
         currBlock.Move(0, 1);
-        if (checkBounds() || checkCollision() == false) {
+        if (checkBounds() || checkCollision() == false)
+        {
             currBlock.Move(0, -1);
         }
     }
     PlaySound(moveFx);
 }
 
-void gameHandler::moveDown() {
-    if (!checkGameOver) {
+void gameHandler::moveDown()
+{
+    if (!checkGameOver)
+    {
         currBlock.Move(1, 0);
-        if (checkBounds() || checkCollision() == false) {
-        currBlock.Move(-1, 0);
+        if (checkBounds() || checkCollision() == false)
+        {
+            currBlock.Move(-1, 0);
             lockBlock();
         }
     }
 }
 
-void gameHandler::rotateBlock() {
-    if (!checkGameOver) {
+void gameHandler::rotateBlock()
+{
+    if (!checkGameOver)
+    {
         currBlock.rotateBlock();
-        if (checkBounds() || checkCollision() == false) {
+        if (checkBounds() || checkCollision() == false)
+        {
             currBlock.rotateUndo();
         }
     }
     PlaySound(moveFx);
 }
 
-void gameHandler::fastDrop() {
-    if (!checkGameOver) {
-        while (true) {
+void gameHandler::fastDrop()
+{
+    if (!checkGameOver)
+    {
+        while (true)
+        {
             currBlock.Move(1, 0);
-            if (checkBounds() || !checkCollision()) {
+            if (checkBounds() || !checkCollision())
+            {
                 currBlock.Move(-1, 0);
                 lockBlock();
                 break;
@@ -298,15 +395,16 @@ void gameHandler::fastDrop() {
     }
 }
 
-
-
-void gameHandler::lockBlock() {
+void gameHandler::lockBlock()
+{
     vector<Pos> tile = currBlock.getCellPos();
-    for (Pos item : tile) {
+    for (Pos item : tile)
+    {
         board.board[item.x][item.y] = currBlock.cellId;
     }
     currBlock = nextBlock;
-    if (checkCollision() == false) {
+    if (checkCollision() == false)
+    {
         checkGameOver = true;
         PlaySound(gameOverFx);
     }
@@ -317,34 +415,64 @@ void gameHandler::lockBlock() {
 
 
     int linesCleared = board.clearLineAll();
-    if (linesCleared > 0) {
+    if (linesCleared > 0)
+    {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
     }
+
+    canHoldPiece = true;
     PlaySound(dropFx);
+    updateGhostBlock();
 }
 
-bool gameHandler::checkCollision() {
-    vector<Pos> tile = currBlock.getCellPos();
-    for (Pos item : tile) {
-        if (!board.checkCollision(item.x, item.y)) {
+void gameHandler::updateGhostBlock()
+{
+    ghostBlock = currBlock; // Copy current block
+    while (true)
+    {
+        ghostBlock.Move(1, 0); // Move down
+        if (checkBounds() || !checkCollision(ghostBlock))
+        {
+            ghostBlock.Move(-1, 0); // Undo move
+            break;
+        }
+    }
+}
+
+bool gameHandler::checkCollision(blockMain block)
+{
+    vector<Pos> tile = block.getCellPos();
+    for (Pos item : tile)
+    {
+        if (!board.checkCollision(item.x, item.y))
+        {
             return false;
         }
     }
     return true;
 }
 
-bool gameHandler::checkBounds() {
+bool gameHandler::checkCollision()
+{
+    return checkCollision(currBlock);
+}
+
+bool gameHandler::checkBounds()
+{
     vector<Pos> tile = currBlock.getCellPos();
-    for (Pos item : tile) {
-        if (board.checkBounds(item.x, item.y)) {
+    for (Pos item : tile)
+    {
+        if (board.checkBounds(item.x, item.y))
+        {
             return true;
         }
     }
     return false;
 }
 
-void gameHandler::Reset() {
+void gameHandler::Reset()
+{
     board.Initialize();
     blockSub = refreshBlocks();
     deque <blockMain> nextBlocks = getRandomBlockQueue();
@@ -360,21 +488,23 @@ void gameHandler::Reset() {
     PlayMusicStream(music);
 }
 
-void gameHandler::updateScore(int linesCleared) {
-    switch(linesCleared) {
-        case 1:
-            score += 100;
-            break;
-        case 2:
-            score += 300;
-            break;
-        case 3:
-            score += 500;
-            break;
-        case 4:
-            score += 800;
-            break;
-        default:
-            break;
+void gameHandler::updateScore(int linesCleared)
+{
+    switch (linesCleared)
+    {
+    case 1:
+        score += 100;
+        break;
+    case 2:
+        score += 300;
+        break;
+    case 3:
+        score += 500;
+        break;
+    case 4:
+        score += 800;
+        break;
+    default:
+        break;
     }
 }
