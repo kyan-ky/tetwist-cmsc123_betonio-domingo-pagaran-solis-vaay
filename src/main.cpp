@@ -7,7 +7,6 @@ int main()
     const int screenHeight = 600;
     bool titleScreenDisplayed = false;
     bool isGamePaused = false;
-
     InitWindow(screenWidth, screenHeight, "Tetris.exe");
     SetTargetFPS(60);
 

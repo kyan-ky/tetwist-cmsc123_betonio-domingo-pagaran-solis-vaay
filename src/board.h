@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include <vector>
 
 using namespace std;
@@ -15,7 +15,7 @@ public:
     bool checkCollision(int x, int y);
     int clearLineAll();
     int board[20][10];
-
+    void clear3x3Block(int startX, int startY);
 private:
     bool checkLine(int x);
     void clearLine(int x);

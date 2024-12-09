@@ -118,3 +118,22 @@ void Board::moveLineDown(int x, int rows)
         board[x][i] = 0;
     }
 }
+void Board::clear3x3Block(int startX, int startY)
+{
+    // Ensure that the 3x3 block is within bounds
+    if (startX < 0 || startX + 2 >= rows || startY < 0 || startY + 2 >= cols)
+    {
+        // If out of bounds, do nothing or handle the error (e.g., print a message)
+        cout << "Error: 3x3 block is out of bounds!" << endl;
+        return;
+    }
+
+    // Clear the 3x3 block by setting the corresponding cells to 0
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            board[startX + i][startY + j] = 0;
+        }
+    }
+}

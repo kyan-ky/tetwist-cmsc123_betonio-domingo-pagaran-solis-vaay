@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include <vector>
 #include <map>
 #include "pos.h"
@@ -12,6 +12,8 @@ class blockMain
 {
 public:
     blockMain();
+    virtual ~blockMain();
+    void SetAsBomb();
     void Draw();
     void ghostDraw();
     void Draw(Color);
@@ -27,9 +29,12 @@ public:
     int initialY;
     int offsetX;
     int offsetY;
-
+    void SetAsBomb(Texture2D texture); // Set block as a bomb with a texture
+    bool IsBomb() const;        
 private:
     int cellSz;
     int rotatePos;
     vector<Color> color;
+    bool isBomb;           // Whether the block is a bomb
+    Texture2D bombTexture; // Texture for the bomb
 };
