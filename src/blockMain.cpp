@@ -1,5 +1,5 @@
 #include "blockMain.h"
-#include "bomba.h" // Include the generated bomb.h file
+#include "bomba.h" 
 
 using namespace std;
 
@@ -14,7 +14,6 @@ blockMain::blockMain()
     initialY = (GetScreenHeight() - 20 * cellSz) / 2;
     isBomb = false;
 
-    // Generate bomb texture from embedded data
     Image bombImage = {0};
         bombImage.width = BOMBA_WIDTH;
         bombImage.height = BOMBA_HEIGHT;
@@ -23,26 +22,16 @@ blockMain::blockMain()
         bombImage.data = BOMBA_DATA;    
         
     bombTexture = LoadTextureFromImage(bombImage);
-    // UnloadImage(bombImage); // Free memory after loading texture
 }
 
 blockMain::~blockMain()
 {
     if (isBomb)
     {
-        UnloadTexture(bombTexture); // Unload bomb texture if it was set
+        UnloadTexture(bombTexture); 
     }
 }
 
-// void blockMain::SetAsBomb()
-// {
-//     isBomb = true;
-// }
-
-// bool blockMain::IsBomb() const
-// {
-//     return isBomb;
-// }
 
 void blockMain::Draw()
 {
@@ -52,10 +41,8 @@ void blockMain::Draw()
     for (Pos item : tile)
     
     {
-                    // DrawTexture(bombTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
         if (cellId ==8)
         {
-            // Draw bomb texture
             DrawTexture(bombTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
         }
         else
