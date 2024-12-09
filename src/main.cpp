@@ -29,7 +29,7 @@ int main()
 
     while (!titleScreenDisplayed) {
         DrawTexture(gif, screenWidth/2 - gif.width/2, screenHeight/2 - gif.height/2 - 100, WHITE);
-
+    }
 
     while (!titleScreenDisplayed)
     {
@@ -128,9 +128,7 @@ int main()
     UnloadTexture(bgDarkTrees);
     UnloadTexture(bgFgTrees);
 
-
     CloseWindow();  
-    CloseWindow();
 
     return 0;
 }

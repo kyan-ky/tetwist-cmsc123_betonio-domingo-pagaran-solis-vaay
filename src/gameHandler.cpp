@@ -8,7 +8,7 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace std;
+// using namespace std;
 
 gameHandler::gameHandler()
 {
@@ -54,23 +54,9 @@ void gameHandler::drawGame()
 
    
     if(nextBlocks.empty()){
-        cout << "queue empty" << endl;
+        std::cout << "queue empty" << endl;
     }
     currBlock.Draw();
-   
-    int nextBlockX = GetScreenWidth() - 250; 
-    int nextBlockY = 100; 
-    switch(nextBlock.cellId) {
-        case 3:
-            nextBlock.DrawAt(nextBlockX-20, nextBlockY+20);
-            break;
-        case 6:
-            nextBlock.DrawAt(nextBlockX-20, nextBlockY+10);
-            break;
-        default:
-
-           nextBlock.DrawAt(nextBlockX, nextBlockY);
-
     // Draw ghost block with a translucent color
     Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
     ghostBlock.Draw(ghostColor);
@@ -156,6 +142,9 @@ string gameHandler::getBlockName(int cellId)
 blockMain gameHandler::getCurrentBlock(){
     if(nextBlocks.empty()){
         nextBlocks = getRandomBlockQueue();
+    }
+    return currBlock;
+}
 blockMain gameHandler::getRandomBlock()
 {
     if (blockSub.empty())
@@ -222,21 +211,15 @@ vector<blockMain> gameHandler::refreshBlocks()
     return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
 }
 
-void gameHandler::holdPiece()
+void gameHandler::holdPiece() 
 {
-    if (!canHoldPiece)
-    {
-        // Prevent holding twice in succession
-        return;
-    }
-
-void gameHandler::holdPiece() {
     if (!checkHoldPiece) {
         heldBlock = currBlock;
         currBlock = nextBlock;
         nextBlock = getNextBlock();
         currBlock.resetPosition(0, 0);
         checkHoldPiece = true;
+    }
     if (!checkHoldPiece)
     {
         // First time holding a piece
