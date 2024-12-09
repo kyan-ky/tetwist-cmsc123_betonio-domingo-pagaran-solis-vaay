@@ -2,6 +2,7 @@
 #include "board.h"
 #include "blockSub.cpp"
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -9,7 +10,11 @@ class gameHandler {
     public:
         gameHandler();
         ~gameHandler();
-        blockMain getRandomBlock();
+        blockMain getCurrentBlock();
+        blockMain getNextBlock();
+        blockMain getSecondBlock();
+        blockMain getThirdBlock();
+        deque<blockMain> getRandomBlockQueue();
         vector<blockMain> refreshBlocks();
         void drawGame();
         void holdPiece();
@@ -33,9 +38,14 @@ class gameHandler {
         void lockBlock();
         bool checkCollision();
         vector<blockMain> blockSub;
+        deque<blockMain> nextBlocks;
         blockMain currBlock;
         blockMain nextBlock;
         blockMain heldBlock;
+        size_t secondIndex;
+        int thirdIndex;
+        blockMain secondBlock;
+        blockMain thirdBlock;
         float moveDownTimer;
         float moveDownDelay;
         float lastFrameTime;
