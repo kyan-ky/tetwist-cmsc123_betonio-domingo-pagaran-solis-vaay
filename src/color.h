@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include <vector>
 
 using namespace std;
@@ -14,5 +14,6 @@ extern const Color yellow;
 extern const Color purple;
 extern const Color lightgray;
 extern const Color white;
+extern const Color pink;
 
 vector<Color> getCellColor();

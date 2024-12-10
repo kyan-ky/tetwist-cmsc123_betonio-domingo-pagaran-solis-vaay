@@ -3,7 +3,7 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include <deque>
 #include <iostream>
 #include <algorithm>
@@ -153,6 +153,10 @@ string gameHandler::getBlockName(int cellId)
         return "Block O";
     case 7:
         return "Block T";
+    case 8:
+        return "Bomb";
+    case 9:
+        return "Star";
     default:
         return "None";
     }
@@ -238,7 +242,7 @@ deque<blockMain> gameHandler::getRandomBlockQueue()
 
 vector<blockMain> gameHandler::refreshBlocks()
 {
-    return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ()};
+    return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ(), blockBomb(), blockStar()};
 }
 
 void gameHandler::holdPiece()
@@ -434,6 +438,19 @@ void gameHandler::lockBlock()
     for (Pos item : tile)
     {
         board.board[item.x][item.y] = currBlock.cellId;
+     }
+        if (currBlock.cellId == 8) 
+    {
+        int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
+        int bombY = tile[0].y;
+        board.clear3x3Block(bombX, bombY); // Clear the surrounding 3x3 area
+        PlaySound(dropFx); // Play the sound for bomb drop
+    }  else if (currBlock.cellId == 9) 
+    {
+        int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
+        int bombY = tile[0].y;
+        board.populate3x3Block(bombX, bombY,10); // Clear the surrounding 3x3 area
+        PlaySound(dropFx); // Play the sound for bomb drop
     }
     currBlock = nextBlock;
     if (checkCollision() == false)
