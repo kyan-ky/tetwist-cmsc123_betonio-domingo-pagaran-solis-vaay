@@ -84,3 +84,46 @@ class blockT : public blockMain {
             Move(0, 3);
         }
 };
+class blockBomb : public blockMain {
+    private:
+        Texture2D bombTexture; 
+
+    public:
+        blockBomb() {
+            cellId = 8; 
+            cell[0] = {Pos(0, 0)}; 
+            cell[1] = {Pos(0, 0)};
+            cell[2] = {Pos(0, 0)};
+            cell[3] = {Pos(0, 0)};
+            Move(0, 3);
+
+        }
+
+};
+class blockStar : public blockMain {
+    private:
+        Texture2D starTexture; 
+
+    public:
+        blockStar() {
+            cellId = 9; 
+            cell[0] = {Pos(0, 0)}; 
+            cell[1] = {Pos(0, 0)};
+            cell[2] = {Pos(0, 0)};
+            cell[3] = {Pos(0, 0)};
+            Move(0, 3);
+
+        }
+
+};
+class blockpink : public blockMain {
+    public:
+        blockpink() {
+            cellId = 10;
+            cell[0] = {Pos(0, 0), Pos(1, 0), Pos(1, 1), Pos(1, 2)};
+            cell[1] = {Pos(0, 1), Pos(0, 2), Pos(1, 1), Pos(2, 1)};
+            cell[2] = {Pos(1, 0), Pos(1, 1), Pos(1, 2), Pos(2, 2)};
+            cell[3] = {Pos(0, 1), Pos(1, 1), Pos(2, 0), Pos(2, 1)};
+            Move(0, 3);
+        }
+};

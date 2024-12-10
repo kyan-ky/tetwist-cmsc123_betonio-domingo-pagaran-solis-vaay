@@ -118,3 +118,38 @@ void Board::moveLineDown(int x, int rows)
         board[x][i] = 0;
     }
 }
+void Board::clear3x3Block(int startX, int startY)
+{
+    for (int i = -1; i <= 1; i++)  
+    {
+        for (int j = -1; j <= 1; j++)  
+        {
+            int x = startX + i;
+            int y = startY + j;
+
+
+            if (x >= 0 && x < rows && y >= 0 && y < cols)
+            {
+                board[x][y] = 0;
+            }
+        }
+    }
+}
+void Board::populate3x3Block(int startX, int startY, int value)
+{
+    for (int i = -1; i <= 1; i++) 
+    {
+        for (int j = -1; j <= 1; j++) 
+        {
+            int x = startX + i;
+            int y = startY + j;
+
+
+            if (x >= 0 && x < rows && y >= 0 && y < cols)
+            {
+
+                board[x][y] = value;
+            }
+        }
+    }
+}

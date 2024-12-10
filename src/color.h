@@ -14,5 +14,6 @@ extern const Color yellow;
 extern const Color purple;
 extern const Color lightgray;
 extern const Color white;
+extern const Color pink;
 
 vector<Color> getCellColor();
