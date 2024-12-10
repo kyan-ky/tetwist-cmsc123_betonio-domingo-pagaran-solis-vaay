@@ -468,11 +468,34 @@ void gameHandler::lockBlock()
     {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
+<<<<<<< Updated upstream
+=======
+
+        if (linesCleared >= 4) {
+            reverseBoard();
+        }
+>>>>>>> Stashed changes
     }
 
     canHoldPiece = true;
     PlaySound(dropFx);
+<<<<<<< Updated upstream
     updateGhostBlock();
+=======
+}
+
+void gameHandler::reverseBoard()
+{
+    int rows = board.getRows(); 
+    int cols = board.getCols(); 
+
+    // Reverse the board
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols / 2; ++j) {
+            std::swap(board.board[i][j], board.board[i][cols - j - 1]);
+        }
+    }
+>>>>>>> Stashed changes
 }
 
 void gameHandler::updateGhostBlock()
