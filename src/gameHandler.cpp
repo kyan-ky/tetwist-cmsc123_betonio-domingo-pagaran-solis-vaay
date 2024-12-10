@@ -13,13 +13,33 @@
 gameHandler::gameHandler()
 {
     board = Board();
-    blockSub = {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ(),blockBomb()};
-    deque<blockMain> nextBlocks = getRandomBlockQueue();
-    currBlock = getCurrentBlock();
-    nextBlock = getNextBlock();
+    blockSub = refreshBlocks();         // Initialize the block set
+    nextBlocks = getRandomBlockQueue(); // Fill the queue with random blocks
+
+    if (!nextBlocks.empty())
+    {
+        currBlock = nextBlocks.front(); // Assign the first block as the current block
+        nextBlocks.pop_front();         // Remove the used block
+    }
+
+    if (!nextBlocks.empty())
+    {
+        nextBlock = nextBlocks.front(); // Assign the second block as the next block
+        nextBlocks.pop_front();         // Remove the used block
+    }
+
     secondIndex = 0;
-    secondBlock = getSecondBlock();
-    thirdBlock = getThirdBlock();
+    if (!nextBlocks.empty())
+    {
+        secondBlock = nextBlocks.front(); // Assign third block for display
+        nextBlocks.pop_front();
+    }
+
+    if (!nextBlocks.empty())
+    {
+        thirdBlock = nextBlocks.front(); // Assign fourth block for display
+    }
+
     checkGameOver = false;
     checkHoldPiece = false;
     score = 0;
@@ -52,8 +72,8 @@ void gameHandler::drawGame()
 {
     board.drawBoard();
 
-   
-    if(nextBlocks.empty()){
+    if (nextBlocks.empty())
+    {
         std::cout << "queue empty" << endl;
     }
     currBlock.Draw();
@@ -78,28 +98,30 @@ void gameHandler::drawGame()
 
     int secondBlockX = GetScreenWidth() - 250;
     int secondBlockY = 240;
-    switch(secondBlock.cellId){
-        case 3:
-            secondBlock.DrawAt(secondBlockX-20, secondBlockY+20);
-            break;
-        case 6:
-            secondBlock.DrawAt(secondBlockX-20, secondBlockY+10);
-            break;
-        default:
-            secondBlock.DrawAt(secondBlockX, secondBlockY);
+    switch (secondBlock.cellId)
+    {
+    case 3:
+        secondBlock.DrawAt(secondBlockX - 20, secondBlockY + 20);
+        break;
+    case 6:
+        secondBlock.DrawAt(secondBlockX - 20, secondBlockY + 10);
+        break;
+    default:
+        secondBlock.DrawAt(secondBlockX, secondBlockY);
     }
 
     int thirdBlockX = GetScreenWidth() - 250;
     int thirdBlockY = 370;
-    switch(thirdBlock.cellId){
-        case 3:
-            thirdBlock.DrawAt(thirdBlockX-20, thirdBlockY+20);
-            break;
-        case 6:
-            thirdBlock.DrawAt(thirdBlockX-20, thirdBlockY+10);
-            break;
-        default:
-            thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
+    switch (thirdBlock.cellId)
+    {
+    case 3:
+        thirdBlock.DrawAt(thirdBlockX - 20, thirdBlockY + 20);
+        break;
+    case 6:
+        thirdBlock.DrawAt(thirdBlockX - 20, thirdBlockY + 10);
+        break;
+    default:
+        thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
     }
 
     Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf"); // Ensure you provide a valid font path
@@ -111,7 +133,6 @@ void gameHandler::drawGame()
         DrawTextEx(font, "Press ENTER to Play Again", {static_cast<float>(GetScreenWidth() / 2 - 280), static_cast<float>(GetScreenHeight() / 2 + 100)}, 40, 5, YELLOW);
         StopMusicStream(music);
     }
-    
 }
 
 string gameHandler::getBlockName(int cellId)
@@ -141,7 +162,8 @@ string gameHandler::getBlockName(int cellId)
 
 blockMain gameHandler::getCurrentBlock()
 {
-    if(nextBlocks.empty()){
+    if (nextBlocks.empty())
+    {
         nextBlocks = getRandomBlockQueue();
     }
     return nextBlocks.front();
@@ -159,34 +181,40 @@ blockMain gameHandler::getRandomBlock()
     return currBlock;
 }
 
-blockMain gameHandler::getNextBlock(){
-    if(nextBlocks.empty()){
-        nextBlocks = getRandomBlockQueue(); 
+blockMain gameHandler::getNextBlock()
+{
+    if (nextBlocks.empty())
+    {
+        nextBlocks = getRandomBlockQueue();
     }
 
-    if(secondIndex >= 6){
+    if (secondIndex >= 6)
+    {
         secondIndex = 0;
     }
-    
+
     cout << "nextblock pop" << endl;
     blockMain next = nextBlocks.front();
     nextBlocks.pop_front();
-    
+
     return next;
 }
 
-blockMain gameHandler::getSecondBlock(){
-    if(nextBlocks.empty()){
+blockMain gameHandler::getSecondBlock()
+{
+    if (nextBlocks.empty())
+    {
         nextBlocks = getRandomBlockQueue();
     }
 
     blockMain s = nextBlocks.front();
     return s;
-
 }
 
-blockMain gameHandler::getThirdBlock(){
-    if(nextBlocks.size() <= 1){
+blockMain gameHandler::getThirdBlock()
+{
+    if (nextBlocks.size() <= 1)
+    {
         nextBlocks = getRandomBlockQueue();
     }
     blockMain third = nextBlocks.at(1);
@@ -194,17 +222,19 @@ blockMain gameHandler::getThirdBlock(){
     return third;
 }
 
-deque<blockMain> gameHandler::getRandomBlockQueue() {
+deque<blockMain> gameHandler::getRandomBlockQueue()
+{
     deque<blockMain> blocks;
-    
+
     random_device rd;
     mt19937 g(rd());
 
     shuffle(blockSub.begin(), blockSub.end(), g);
-    for(int i =0; i < 7; i++){
+    for (int i = 0; i < 7; i++)
+    {
         blocks.emplace_back(blockSub[i]);
     }
-    
+
     return blocks;
 }
 
@@ -213,9 +243,10 @@ vector<blockMain> gameHandler::refreshBlocks()
     return {blockI(), blockJ(), blockL(), blockO(), blockS(), blockT(), blockZ(), blockBomb()};
 }
 
-void gameHandler::holdPiece() 
+void gameHandler::holdPiece()
 {
-    if (!checkHoldPiece) {
+    if (!checkHoldPiece)
+    {
         heldBlock = currBlock;
         currBlock = nextBlock;
         nextBlock = getNextBlock();
@@ -352,15 +383,34 @@ void gameHandler::moveDown()
 
 void gameHandler::rotateBlock()
 {
-    if (!checkGameOver)
+    if (checkGameOver)
+        return;
+
+    // Attempt to rotate the block
+    currBlock.rotateBlock();
+
+    // Check for boundary violations or collisions
+    if (checkBounds() || !checkCollision())
     {
-        currBlock.rotateBlock();
-        if (checkBounds() || checkCollision() == false)
+        // Try shifting the block to accommodate rotation
+        for (int offset = -2; offset <= 2; ++offset)
         {
-            currBlock.rotateUndo();
+            currBlock.Move(0, offset); // Move horizontally
+            if (!checkBounds() && checkCollision())
+            {
+                PlaySound(moveFx); // Play sound for successful adjustment
+                return;            // Successfully rotated with an adjustment
+            }
+            currBlock.Move(0, -offset); // Undo the shift
         }
+
+        // If no adjustment works, undo the rotation
+        currBlock.rotateUndo();
     }
-    PlaySound(moveFx);
+    else
+    {
+        PlaySound(moveFx); // Play sound for successful rotation
+    }
 }
 
 void gameHandler::fastDrop()
@@ -404,7 +454,6 @@ void gameHandler::lockBlock()
     nextBlock = getNextBlock();
     secondBlock = getSecondBlock();
     thirdBlock = getThirdBlock();
-
 
     int linesCleared = board.clearLineAll();
     if (linesCleared > 0)
@@ -467,7 +516,7 @@ void gameHandler::Reset()
 {
     board.Initialize();
     blockSub = refreshBlocks();
-    deque <blockMain> nextBlocks = getRandomBlockQueue();
+    deque<blockMain> nextBlocks = getRandomBlockQueue();
     currBlock = getCurrentBlock();
     nextBlock = getNextBlock();
     checkGameOver = false;
