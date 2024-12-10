@@ -153,3 +153,13 @@ void Board::populate3x3Block(int startX, int startY, int value)
         }
     }
 }
+
+int Board::getRows()
+{
+    return rows;
+}
+
+int Board::getCols()
+{
+    return cols;
+}

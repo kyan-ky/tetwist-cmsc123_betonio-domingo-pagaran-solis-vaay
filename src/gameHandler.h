@@ -61,4 +61,6 @@ class gameHandler {
         float moveDelay; // Delay between key repeats
         float lastMoveTime;
         bool canHoldPiece;   
+        void reverseBoard();
+        bool heldBlockBool;
 };
