@@ -17,6 +17,8 @@ public:
     int board[20][10];
     void clear3x3Block(int startX, int startY);
     void populate3x3Block(int startX, int startY, int value);
+    int getRows();
+    int getCols();
 private:
     bool checkLine(int x);
     void clearLine(int x);

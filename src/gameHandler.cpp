@@ -47,7 +47,7 @@ gameHandler::gameHandler()
     highScore = 0;
     LoadHighScore();
     moveDownTimer = 0.0f;
-    moveDownDelay = 0.5f;
+    moveDownDelay = 0.7f;
     lastFrameTime = GetTime();
     InitAudioDevice();
     music = LoadMusicStream("sound/Tetris.mp3");
@@ -323,9 +323,10 @@ void gameHandler::inputHandler()
         fastDrop();
         updateGhostBlock();
     }
-    if (IsKeyPressed(KEY_C))
+    if (IsKeyPressed(KEY_C) && !canHoldPiece)
     {
         holdPiece();
+        canHoldPiece = true;
     }
 
     // Uncomment if you want to use backspace to exit the game
@@ -340,6 +341,13 @@ void gameHandler::updateGame()
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
+    heldBlockBool = true;
+    if (score % 800 == 0 && score > 0) 
+    {
+        if (moveDownDelay > 0.1f) { // Ensure it doesn't go below 0.1 seconds
+            moveDownDelay -= 0.05f; // Decrease delay by 0.05 seconds
+        }
+    }
     if (moveDownTimer >= moveDownDelay)
     {
         moveDown();
@@ -473,11 +481,27 @@ void gameHandler::lockBlock()
     {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
+        if (linesCleared >= 4) {
+            reverseBoard();
+        }
     }
 
     canHoldPiece = true;
     PlaySound(dropFx);
     updateGhostBlock();
+}
+
+void gameHandler::reverseBoard()
+{
+    int rows = board.getRows(); 
+    int cols = board.getCols(); 
+
+    // Reverse the board
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols / 2; ++j) {
+            std::swap(board.board[i][j], board.board[i][cols - j - 1]);
+        }
+    }
 }
 
 void gameHandler::updateGhostBlock()
