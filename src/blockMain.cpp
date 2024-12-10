@@ -93,10 +93,11 @@ void blockMain::rotateUndo()
     }
 }
 
-void blockMain::resetPosition(int x, int y)
+void blockMain::resetPosition()
 {
-    x = (GetScreenWidth() - 10 * cellSz) / 2;
-    y = (GetScreenHeight() - 20 * cellSz) / 2;
+    // Reset offsets to position the block at the top center of the board
+    offsetX = (GetScreenWidth() - cellSz) / 2;
+    offsetY =  0;
 }
 
 //     vector<Pos> tile = getCellPos();

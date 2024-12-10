@@ -4,6 +4,7 @@
 #include "blockSub.cpp"
 #include <string>
 #include <deque>
+#include <queue>
 
 using namespace std;
 
@@ -41,9 +42,11 @@ class gameHandler {
         bool checkCollision();
         vector<blockMain> blockSub;
         deque<blockMain> nextBlocks;
+        queue<blockMain> heldBlocks;
         blockMain currBlock;
         blockMain nextBlock;
         blockMain heldBlock;
+        blockMain heldBlock2;
         size_t secondIndex;
         int thirdIndex;
         blockMain secondBlock;
@@ -61,4 +64,5 @@ class gameHandler {
         float moveDelay; // Delay between key repeats
         float lastMoveTime;
         bool canHoldPiece;   
+        float lockTimer;
 };

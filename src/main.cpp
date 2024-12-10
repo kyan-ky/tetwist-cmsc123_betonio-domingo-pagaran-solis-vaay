@@ -94,7 +94,7 @@ int main()
         //DrawTextureEx(bgTexture, (Vector2){bgX + bgTexture.width * scaleX, 0.0f}, 0.0f, scaleX, WHITE);
 
 
-        Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
+        Font font = Font();
         DrawRectangle(GetScreenWidth() - 200, 70, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 210, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 350, 160, 120, black);
@@ -103,7 +103,7 @@ int main()
         DrawRectangle(GetScreenWidth() - 220, 580, 200, 100, black);
         DrawTextEx(font, "Score", {static_cast<float>(GetScreenWidth() - 210), 500}, 60, 5, white);
         DrawTextEx(font, to_string(game.score).c_str(), {static_cast<float>(GetScreenWidth() - 200), 590}, 50, 5, white);
-        DrawRectangle(GetScreenWidth() - 780, 75, 200, 75, black);
+        DrawRectangle(GetScreenWidth() - 780, 75, 200, 115, black);
         DrawTextEx(font, "Hold", {static_cast<float>(GetScreenWidth() - 740), 15}, 45, 5, white);
         DrawRectangle(GetScreenWidth() - 795, 275, 240, 230, black);
         DrawTextEx(font, "How to Play", {static_cast<float>(GetScreenWidth() - 790), 240}, 30, 5, white);

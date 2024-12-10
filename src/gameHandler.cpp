@@ -102,8 +102,7 @@ void gameHandler::drawGame()
             thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
     }
 
-    Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf"); // Ensure you provide a valid font path
-    DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
+    Font font = Font();
     if (checkGameOver)
     {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(GRAY, 0.8f));
@@ -112,6 +111,16 @@ void gameHandler::drawGame()
         StopMusicStream(music);
     }
     
+    // Draw the held blocks
+    std::queue<blockMain> tempQueue = heldBlocks; 
+    int yOffset = 100; 
+    while (!tempQueue.empty()) {
+        DrawTextEx(font, ((getBlockName(tempQueue.front().cellId)).c_str()), 
+                   {static_cast<float>(GetScreenWidth() - 745), static_cast<float>(yOffset)}, 
+                   30, 5, white);
+        tempQueue.pop(); 
+        yOffset += 40; 
+    }
 }
 
 string gameHandler::getBlockName(int cellId)
@@ -213,29 +222,20 @@ vector<blockMain> gameHandler::refreshBlocks()
 
 void gameHandler::holdPiece() 
 {
-    if (!checkHoldPiece) {
-        heldBlock = currBlock;
-        currBlock = nextBlock;
-        nextBlock = getNextBlock();
-        currBlock.resetPosition(0, 0);
-        checkHoldPiece = true;
-    }
-    if (!checkHoldPiece)
-    {
-        // First time holding a piece
-        heldBlock = currBlock;        // Move the current block to the hold
-        currBlock = nextBlock;        // Replace current block with the next block
-        nextBlock = getRandomBlock(); // Generate a new next block
-        checkHoldPiece = true;        // Mark that a piece has been held
-    }
-    else
-    {
-        // Swap held block with the current block
-        swap(currBlock, heldBlock);
+    if (heldBlocks.size() < 2) {
+        // If there is space in the held blocks, add the current block
+        heldBlocks.push(currBlock); // Store current block in heldBlocks
+        currBlock = nextBlock; // Move next block to current
+        nextBlock = getNextBlock(); // Get a new next block
+    } else {
+        // Swap the current block with the block at the front of the queue (heldBlock1)
+        blockMain temp = currBlock; // Store current block temporarily
+        currBlock = heldBlocks.front(); // Set current to heldBlock1
+        heldBlocks.pop(); // Remove heldBlock1 from the queue
+        heldBlocks.push(temp); // Add the previous current block to the back of the queue
     }
 
-    currBlock.resetPosition(0, 0); // Reset the position of the new current block
-    canHoldPiece = false;          // Disable holding until the next block is placed
+    canHoldPiece = false; // Prevent holding again until the piece is placed
 }
 
 void gameHandler::inputHandler()
@@ -283,9 +283,10 @@ void gameHandler::inputHandler()
         fastDrop();
         updateGhostBlock();
     }
-    if (IsKeyPressed(KEY_C))
+    if (canHoldPiece && IsKeyPressed(KEY_C))
     {
         holdPiece();
+        canHoldPiece = false;
     }
 
     // Uncomment if you want to use backspace to exit the game
@@ -300,6 +301,14 @@ void gameHandler::updateGame()
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
+
+    // Adjust moveDownDelay based on multiples of 800
+    if (score % 800 == 0 && score > 0) {
+        if (moveDownDelay > 0.1f) { 
+            moveDownDelay -= 0.05f; 
+        }
+    }
+
     if (moveDownTimer >= moveDownDelay)
     {
         moveDown();
@@ -458,15 +467,17 @@ void gameHandler::Reset()
 {
     board.Initialize();
     blockSub = refreshBlocks();
-    deque <blockMain> nextBlocks = getRandomBlockQueue();
+    nextBlocks = getRandomBlockQueue();
     currBlock = getCurrentBlock();
     nextBlock = getNextBlock();
+    while (!heldBlocks.empty()) {
+        heldBlocks.pop(); // Clear held blocks
+    }
     checkGameOver = false;
     checkHoldPiece = false;
-    heldBlock = blockMain();
     score = 0;
     moveDownTimer = 0.0f;
-    moveDownDelay = 0.5f;
+    moveDownDelay = 0.7f;
     lastFrameTime = GetTime();
     PlayMusicStream(music);
 }

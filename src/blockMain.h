@@ -22,7 +22,7 @@ public:
     void rotateUndo();
     int cellId;
     map<int, vector<Pos>> cell;
-    void resetPosition(int x, int y);
+    void resetPosition();
     int initialX;
     int initialY;
     int offsetX;
