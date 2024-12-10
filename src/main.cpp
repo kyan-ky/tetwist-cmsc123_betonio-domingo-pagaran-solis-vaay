@@ -120,14 +120,21 @@ int main()
         else if( currentScreen == MECHANICS_SCREEN){
             DrawTextEx(font, "How to Play", {225, 60}, 50, 10, WHITE);
             DrawTextEx(font, "ARROW KEYS", {270, 160}, 25, 10, WHITE);
-            DrawTextEx(font, "UP-Rotate Block", {200, 240}, 18, 10, WHITE);
-            DrawTextEx(font, "LEFT-Move Block Left", {200, 270}, 18, 10, WHITE);
-            DrawTextEx(font, "RIGHT-Move Block Right", {200, 300}, 18, 10, WHITE);
-            DrawTextEx(font, "DOWN-Move Block Down", {200, 330}, 18, 10, WHITE);
-            DrawTextEx(font, "Space-Drop Block", {200, 360}, 18, 10, WHITE);
-            DrawTextEx(font, "C-Shift/Hold Block", {200, 390}, 18, 10, WHITE);
-            DrawTextEx(font, "Press SPACE to return to the main menu.",
-                    {20, screenHeight - 50}, 25, 5, YELLOW);
+            DrawTextEx(font, "[UP] - Rotate Block", {200, 200}, 18, 10, WHITE);
+            DrawTextEx(font, "[LEFT] - Move Block Left", {200, 230}, 18, 10, WHITE);
+            DrawTextEx(font, "[RIGHT] - Move Block Right", {200, 260}, 18, 10, WHITE);
+            DrawTextEx(font, "[DOWN] - Move Block Down", {200, 290}, 18, 10, WHITE);
+            DrawTextEx(font, "[SPACE] - Drop Block", {200, 320}, 18, 10, WHITE);
+            DrawTextEx(font, "[C] - Shift/Hold Block", {200, 350}, 18, 10, WHITE);
+
+            DrawTextEx(font, "POWER-UPS", {20, 400}, 25, 10, WHITE);
+            DrawTextEx(font, "BOMB - occuppies a single cell and clears all \n      blocks in the 8 surrounding cells\n      when triggered.", {20, 460}, 18, 10, WHITE);
+            DrawTextEx(font, "STAR - occuppies a single cell and fills all \n      blocks in the 8 surrounding cells\n      when triggered.", {20, 520}, 18, 10, WHITE);
+            DrawTextEx(font, "4-LINE CLEAR - Clearing four lines flips \n      the entire board horizontally.", {20, 580}, 18, 10, WHITE);
+            
+
+            DrawTextEx(font, "[SPACE] Main Menu",
+                    {screenWidth - 250, screenHeight - 50}, 15, 5, YELLOW);
 
             if (IsKeyPressed(KEY_SPACE))
             {
