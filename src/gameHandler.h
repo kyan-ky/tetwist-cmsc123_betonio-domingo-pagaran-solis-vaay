@@ -29,8 +29,11 @@ class gameHandler {
         bool checkGameOver;
         bool checkHoldPiece;
         int score;
+        int highScore;
         Music music;
         string getBlockName(int cellId);
+        void LoadHighScore();
+        void UpdateHighScore(int);
     private:
         bool checkBounds();
         void Reset();
