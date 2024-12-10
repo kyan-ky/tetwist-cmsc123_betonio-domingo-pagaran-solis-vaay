@@ -6,10 +6,10 @@ int main()
     InitWindow(800, 600, "Image to C Code Exporter");
 
     // Load the image from your specified path
-    Image img = LoadImage("C:\\Users\\vaay\\tetwist-cmsc123\\src\\bomb.jpg");
+    Image img = LoadImage("C:\\Users\\vaay\\tetwist-cmsc123\\src\\star.jpg");
 
     // Export the image as C code
-    ExportImageAsCode(img, "bomb.h");
+    ExportImageAsCode(img, "star.h");
 
     // Unload the image to free memory
     UnloadImage(img);

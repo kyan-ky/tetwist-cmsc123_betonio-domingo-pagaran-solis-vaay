@@ -33,4 +33,5 @@ private:
     int rotatePos;
     vector<Color> color;
     Texture2D bombTexture; 
+    Texture2D starTexture; 
 };

@@ -1,5 +1,6 @@
 #include "blockMain.h"
 #include "bomb.h"
+#include "star.h"
 using namespace std;
 
 blockMain::blockMain()
@@ -19,6 +20,15 @@ blockMain::blockMain()
         bombImage.data = BOMB_DATA;    
 
     bombTexture = LoadTextureFromImage(bombImage);
+
+        Image starImage = {0};
+        starImage.width = STAR_WIDTH;
+        starImage.height = STAR_HEIGHT;
+        starImage.mipmaps = 1;
+        starImage.format = STAR_FORMAT;
+        starImage.data = STAR_DATA;    
+
+    starTexture = LoadTextureFromImage(starImage);
 }
 
 void blockMain::Draw()
@@ -31,6 +41,8 @@ void blockMain::Draw()
        if (cellId ==8)
         {
             DrawTexture(bombTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
+        }else if(cellId==9){
+            DrawTexture(starTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
         }
         else
         {
@@ -71,6 +83,8 @@ void blockMain::DrawAt(int x, int y)
                   if (cellId ==8) 
         {
             DrawTexture(bombTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
+        }else if(cellId==9){
+                 DrawTexture(starTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
         }
         else{
         DrawRectangle(x + item.y * cellSz + 1, y + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);

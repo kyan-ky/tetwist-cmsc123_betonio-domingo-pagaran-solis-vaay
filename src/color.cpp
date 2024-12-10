@@ -12,9 +12,10 @@ const Color yellow = {254, 213, 1, 255};
 const Color purple = {191, 40, 212, 255};
 const Color lightgray = {11, 9, 10, 11};
 const Color white = {234, 231, 230, 255};
+const Color pink = {255, 182, 193, 255};
 
 
 vector<Color> getCellColor() {
-    return {black, indigo, orange, cyan, red, green, yellow, purple, lightgray, white};
+    return {black, indigo, orange, cyan, red, green, yellow, purple, lightgray, white, pink};
 }
 
