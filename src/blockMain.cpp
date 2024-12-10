@@ -1,5 +1,5 @@
 #include "blockMain.h"
-
+#include "bomb.h"
 using namespace std;
 
 blockMain::blockMain()
@@ -11,6 +11,14 @@ blockMain::blockMain()
     offsetY = 0;
     initialX = (GetScreenWidth() - 10 * cellSz) / 2;
     initialY = (GetScreenHeight() - 20 * cellSz) / 2;
+        Image bombImage = {0};
+        bombImage.width = BOMB_WIDTH;
+        bombImage.height = BOMB_HEIGHT;
+        bombImage.mipmaps = 1;
+        bombImage.format = BOMB_FORMAT;
+        bombImage.data = BOMB_DATA;    
+
+    bombTexture = LoadTextureFromImage(bombImage);
 }
 
 void blockMain::Draw()
@@ -20,7 +28,14 @@ void blockMain::Draw()
     int startY = (GetScreenHeight() - 20 * cellSz) / 2;
     for (Pos item : tile)
     {
-        DrawRectangle(startX + item.y * cellSz + 1, startY + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
+       if (cellId ==8)
+        {
+            DrawTexture(bombTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
+        }
+        else
+        {
+            DrawRectangle(startX + item.y * cellSz + 1, startY + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
+        }
     }
 }
 
@@ -53,7 +68,13 @@ void blockMain::DrawAt(int x, int y)
     vector<Pos> tile = getCellPos();
     for (Pos item : tile)
     {
+                  if (cellId ==8) 
+        {
+            DrawTexture(bombTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
+        }
+        else{
         DrawRectangle(x + item.y * cellSz + 1, y + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
+    }
     }
 }
 

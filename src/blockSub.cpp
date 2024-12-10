@@ -84,3 +84,19 @@ class blockT : public blockMain {
             Move(0, 3);
         }
 };
+class blockBomb : public blockMain {
+    private:
+        Texture2D bombTexture; 
+
+    public:
+        blockBomb() {
+            cellId = 8; 
+            cell[0] = {Pos(0, 0)}; 
+            cell[1] = {Pos(0, 0)};
+            cell[2] = {Pos(0, 0)};
+            cell[3] = {Pos(0, 0)};
+            Move(0, 3);
+
+        }
+
+};
