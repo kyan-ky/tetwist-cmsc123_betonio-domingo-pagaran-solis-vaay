@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "C:\raylib\raylib\src\raylib.h"
 #include "board.h"
 #include "blockSub.cpp"
 #include <string>
@@ -29,8 +29,11 @@ class gameHandler {
         bool checkGameOver;
         bool checkHoldPiece;
         int score;
+        int highScore;
         Music music;
         string getBlockName(int cellId);
+        void LoadHighScore();
+        void UpdateHighScore(int);
     private:
         bool checkBounds();
         void Reset();
