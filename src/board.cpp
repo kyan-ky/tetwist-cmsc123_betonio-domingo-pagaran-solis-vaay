@@ -1,6 +1,7 @@
 #include "board.h"
 #include "color.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -151,5 +152,27 @@ void Board::populate3x3Block(int startX, int startY, int value)
                 board[x][y] = value;
             }
         }
+    }
+}
+
+int Board::getRows() const {
+    return rows;
+}
+
+int Board::getCols() const {
+    return cols;
+}
+
+void Board::invertColors()
+{
+    for (int i = 0; i < 10; i++) // Assuming you have 10 colors
+    {
+        // Invert the color and clamp the values to ensure they are within the valid range
+        color[i].r = static_cast<unsigned char>(std::clamp(255 - static_cast<int>(color[i].r), 0, 255));
+        color[i].g = static_cast<unsigned char>(std::clamp(255 - static_cast<int>(color[i].g), 0, 255));
+        color[i].b = static_cast<unsigned char>(std::clamp(255 - static_cast<int>(color[i].b), 0, 255));
+        
+        // Adjust the alpha value to make it less pure
+        color[i].a = static_cast<unsigned char>(std::clamp(color[i].a * 0.8f, 0.0f, 255.0f)); // Reduce alpha to 80%
     }
 }

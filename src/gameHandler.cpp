@@ -438,20 +438,24 @@ void gameHandler::lockBlock()
     for (Pos item : tile)
     {
         board.board[item.x][item.y] = currBlock.cellId;
-     }
-        if (currBlock.cellId == 8) 
+    }
+
+    // Check for bomb blocks
+    if (currBlock.cellId == 8) 
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
         board.clear3x3Block(bombX, bombY); // Clear the surrounding 3x3 area
         PlaySound(dropFx); // Play the sound for bomb drop
-    }  else if (currBlock.cellId == 9) 
+    }  
+    else if (currBlock.cellId == 9) 
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
-        board.populate3x3Block(bombX, bombY,10); // Clear the surrounding 3x3 area
+        board.populate3x3Block(bombX, bombY, 10); // Clear the surrounding 3x3 area
         PlaySound(dropFx); // Play the sound for bomb drop
     }
+
     currBlock = nextBlock;
     if (checkCollision() == false)
     {
@@ -468,11 +472,29 @@ void gameHandler::lockBlock()
     {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
+
+        // Reverse the board if 4 or more lines are cleared
+        if (linesCleared >= 4) {
+            reverseBoard(); // Call the method to reverse the board
+        }
     }
 
     canHoldPiece = true;
     PlaySound(dropFx);
-    updateGhostBlock();
+}
+
+void gameHandler::reverseBoard()
+{
+    // Assuming board is a 2D vector or array
+    int rows = board.getRows(); // Get the number of rows in the board
+    int cols = board.getCols(); // Get the number of columns in the board
+
+    // Reverse the board
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols / 2; ++j) {
+            std::swap(board.board[i][j], board.board[i][cols - j - 1]);
+        }
+    }
 }
 
 void gameHandler::updateGhostBlock()

@@ -57,7 +57,8 @@ class gameHandler {
         Sound gameOverFx;
         blockMain ghostBlock; // New variable to store the ghost block
         bool checkCollision(blockMain block); // Overloaded to check collision for a specific block
-        void updateGhostBlock();              // New method to update the ghost block position
+        void updateGhostBlock(); 
+        void reverseBoard();             // New method to update the ghost block position
         float moveDelay; // Delay between key repeats
         float lastMoveTime;
         bool canHoldPiece;   

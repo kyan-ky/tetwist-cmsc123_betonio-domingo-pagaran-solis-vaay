@@ -17,6 +17,9 @@ public:
     int board[20][10];
     void clear3x3Block(int startX, int startY);
     void populate3x3Block(int startX, int startY, int value);
+    int getRows() const;
+    int getCols() const;
+    void invertColors();
 private:
     bool checkLine(int x);
     void clearLine(int x);
