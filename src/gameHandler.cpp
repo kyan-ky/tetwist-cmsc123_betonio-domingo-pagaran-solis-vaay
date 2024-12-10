@@ -7,6 +7,7 @@
 #include <deque>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 // using namespace std;
 
@@ -43,6 +44,8 @@ gameHandler::gameHandler()
     checkGameOver = false;
     checkHoldPiece = false;
     score = 0;
+    highScore = 0;
+    LoadHighScore();
     moveDownTimer = 0.0f;
     moveDownDelay = 0.5f;
     lastFrameTime = GetTime();
@@ -128,6 +131,7 @@ void gameHandler::drawGame()
     DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
     if (checkGameOver)
     {
+        UpdateHighScore(score);
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(GRAY, 0.8f));
         DrawTextEx(font, "Game Over", {static_cast<float>(GetScreenWidth() / 2 - 150), static_cast<float>(GetScreenHeight() / 2 - 50)}, 60, 5, RED);
         DrawTextEx(font, "Press ENTER to Play Again", {static_cast<float>(GetScreenWidth() / 2 - 280), static_cast<float>(GetScreenHeight() / 2 + 100)}, 40, 5, YELLOW);
@@ -279,6 +283,7 @@ void gameHandler::inputHandler()
     {
         if (IsKeyPressed(KEY_ENTER))
         { // Use IsKeyPressed for single press events
+            UpdateHighScore(score);
             checkGameOver = false;
             Reset();
         }
@@ -555,5 +560,37 @@ void gameHandler::updateScore(int linesCleared)
         break;
     default:
         break;
+    }
+}
+
+void gameHandler::LoadHighScore()
+{
+    std::ifstream scoreFile("highscore.txt");
+    if (!scoreFile.is_open()) {
+        // If the file doesn't exist, create it with a default value of 0
+        std::ofstream createFile("highscore.txt");
+        createFile << "0";  // Initialize high score to 0
+        createFile.close();
+        highScore = 0;
+    }
+    else {
+        // Read the high score from the file
+        scoreFile >> highScore;
+        scoreFile.close();
+    }
+}
+
+// Save the high score to the file
+void gameHandler::UpdateHighScore(int score)
+{
+    if (score > highScore) {
+        highScore = score;  // Update the high score
+        std::ofstream scoreFile("highscore.txt");
+        if (scoreFile.is_open()) {
+            scoreFile << highScore;  // Save the new high score
+            scoreFile.close();
+        } else {
+            std::cerr << "Error: Could not write to highscore.txt\n";
+        }
     }
 }

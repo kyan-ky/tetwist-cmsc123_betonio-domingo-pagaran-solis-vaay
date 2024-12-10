@@ -1,8 +1,10 @@
 #include "gameHandler.h"
 
+
 int main()
 {
     Color bgBlack = Color{53, 56, 57, 255};
+    Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
     const int screenWidth = 800;
     const int screenHeight = 700;
     bool titleScreenDisplayed = false;
@@ -16,6 +18,8 @@ int main()
     Texture2D bgmountainFar = LoadTexture("assets/parallax-mountain-montain-far.png");
     Texture2D bgmountainNear = LoadTexture("assets/parallax-mountain-mountains.png");
     Texture2D bgDarkTrees = LoadTexture("assets/parallax-mountain-trees.png");
+    Texture2D bgMenu = LoadTexture("assets/menu.png");
+    Texture2D logo = LoadTexture("assets/logo.png");
 
     Texture2D gif = LoadTexture("tetris.gif");
     gameHandler game = gameHandler();
@@ -26,22 +30,117 @@ int main()
     float scrollingDarkTrees = 0.0f;
     float scrollingForegroundTrees = 0.0f;
 
+    enum ScreenState{
+        MAIN_MENU,
+        MECHANICS_SCREEN
+    };
+
+    ScreenState currentScreen = MAIN_MENU;
+    int selectedOption = 0;
+
     while (!titleScreenDisplayed)
     {
-        DrawTexture(gif, screenWidth / 2 - gif.width / 2, screenHeight / 2 - gif.height / 2 - 100, WHITE);
-        DrawText("Press ENTER to start the game.", 60, 320, 40, YELLOW);
-        DrawText("Press BACKSPACE to quit.", 120, 400, 40, RED);
-        if (IsKeyPressed(KEY_ENTER))
-        {
-            titleScreenDisplayed = true;
+        BeginDrawing();
+        ClearBackground(bgBlack);
+
+        Rectangle sourceRect = {0, 0, (float)bgMenu.width, (float)bgMenu.height};
+
+        Rectangle destRect = {0, 0, (float)screenWidth, (float)screenHeight};
+
+        Vector2 origin = {0, 0};
+
+        DrawTexturePro(bgMenu, sourceRect, destRect, origin, 0.0f, WHITE);
+
+
+        if(currentScreen == MAIN_MENU){
+            float scaleX = (float)screenWidth / logo.width;
+            float scaleY = (float)screenHeight / logo.height;
+            float scale = scaleX < scaleY ? scaleX : scaleY;  
+
+            Rectangle dest = {
+                screenWidth / 2.0f - (logo.width * scale) / 2.0f, 
+                0,                        
+                logo.width * scale,     
+                logo.height * scale  
+            };    
+
+            float textVerticalOffset = dest.height + 20;
+
+            std::string highScoreText = "High Score: " + std::to_string(game.highScore);
+            DrawTextEx(font, highScoreText.c_str(), {screenWidth / 2.0f - MeasureText(highScoreText.c_str(), 30) / 2, screenHeight - 50}, 30, 2, YELLOW);
+
+
+
+            Rectangle src = {0, 0, (float)logo.width, (float)logo.height};
+            Vector2 origin = {0, 0};
+            DrawTexturePro(logo, src, dest, origin, 0.0f, WHITE);
+
+            std::vector<std::string> menuOptions = {"Play","Mechanics", "Quit"};
+
+            if (IsKeyPressed(KEY_DOWN))
+            {
+                selectedOption = (selectedOption + 1) % menuOptions.size();  
+            }
+            if (IsKeyPressed(KEY_UP))
+            {
+                selectedOption = (selectedOption - 1 + menuOptions.size()) % menuOptions.size(); 
+            }
+
+            for (size_t i = 0; i < menuOptions.size(); ++i)
+            {
+                std::string displayText = (i == selectedOption) 
+                    ? ">> " + menuOptions[i] + " <<"
+                    : menuOptions[i];  
+
+                Color color = (i == selectedOption) ? YELLOW : GRAY; 
+                DrawTextEx(font, displayText.c_str(), 
+                        {static_cast<float>(screenWidth / 2 - MeasureText(displayText.c_str(), 40) / 2), 
+                            static_cast<float>(textVerticalOffset + i * 50)}, 
+                        40, 2, color);
+            }
+
+            if (IsKeyPressed(KEY_ENTER)) 
+            {
+                if (selectedOption == 0)  
+                {
+                    titleScreenDisplayed = true;
+                }
+                else if (selectedOption == 1) 
+                {
+                    currentScreen = MECHANICS_SCREEN; 
+                }
+                else if (selectedOption == 2){
+                    CloseWindow();
+                    return 0;
+                }
+            }
+
         }
-        if (IsKeyPressed(KEY_BACKSPACE))
+
+        else if( currentScreen == MECHANICS_SCREEN){
+            DrawTextEx(font, "How to Play", {225, 60}, 50, 10, WHITE);
+            DrawTextEx(font, "ARROW KEYS", {270, 160}, 25, 10, WHITE);
+            DrawTextEx(font, "UP-Rotate Block", {200, 240}, 18, 10, WHITE);
+            DrawTextEx(font, "LEFT-Move Block Left", {200, 270}, 18, 10, WHITE);
+            DrawTextEx(font, "RIGHT-Move Block Right", {200, 300}, 18, 10, WHITE);
+            DrawTextEx(font, "DOWN-Move Block Down", {200, 330}, 18, 10, WHITE);
+            DrawTextEx(font, "Space-Drop Block", {200, 360}, 18, 10, WHITE);
+            DrawTextEx(font, "C-Shift/Hold Block", {200, 390}, 18, 10, WHITE);
+            DrawTextEx(font, "Press SPACE to return to the main menu.",
+                    {20, screenHeight - 50}, 25, 5, YELLOW);
+
+            if (IsKeyPressed(KEY_SPACE))
+            {
+                currentScreen = MAIN_MENU;  
+            }
+        }
+
+        if (WindowShouldClose())
         {
             CloseWindow();
             return 0;
         }
-        BeginDrawing();
-        ClearBackground(bgBlack);
+        
         EndDrawing();
     }
 
@@ -118,10 +217,12 @@ int main()
         EndDrawing();
     }
     UnloadTexture(bgmountainFar);
+    UnloadTexture(bgMenu);
     UnloadTexture(bgMoon);
     UnloadTexture(bgmountainNear);
     UnloadTexture(bgDarkTrees);
     UnloadTexture(bgFgTrees);
+    UnloadTexture(logo);
 
     CloseWindow();  
 
