@@ -63,7 +63,7 @@ gameHandler::gameHandler()
 
     updateGhostBlock(); // Initialize ghost block
 
-    flippedBoard = true; // Flag to track if the board has been flipped
+    flippedBoard = false; // Flag to track if the board has been flipped
 }
 
 gameHandler::~gameHandler()
