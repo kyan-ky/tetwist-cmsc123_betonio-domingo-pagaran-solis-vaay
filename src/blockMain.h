@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\raylib\raylib\src\raylib.h"
+#include <raylib.h>
 #include <vector>
 #include <map>
 #include "pos.h"
@@ -32,6 +32,6 @@ private:
     int cellSz;
     int rotatePos;
     vector<Color> color;
-    Texture2D bombTexture; 
-    Texture2D starTexture; 
+    Texture2D bombTexture;
+    Texture2D starTexture;
 };

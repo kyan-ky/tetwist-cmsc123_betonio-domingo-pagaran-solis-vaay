@@ -12,21 +12,21 @@ blockMain::blockMain()
     offsetY = 0;
     initialX = (GetScreenWidth() - 10 * cellSz) / 2;
     initialY = (GetScreenHeight() - 20 * cellSz) / 2;
-        Image bombImage = {0};
-        bombImage.width = BOMB_WIDTH;
-        bombImage.height = BOMB_HEIGHT;
-        bombImage.mipmaps = 1;
-        bombImage.format = BOMB_FORMAT;
-        bombImage.data = BOMB_DATA;    
+    Image bombImage = {0};
+    bombImage.width = BOMB_WIDTH;
+    bombImage.height = BOMB_HEIGHT;
+    bombImage.mipmaps = 1;
+    bombImage.format = BOMB_FORMAT;
+    bombImage.data = BOMB_DATA;
 
     bombTexture = LoadTextureFromImage(bombImage);
 
-        Image starImage = {0};
-        starImage.width = STAR_WIDTH;
-        starImage.height = STAR_HEIGHT;
-        starImage.mipmaps = 1;
-        starImage.format = STAR_FORMAT;
-        starImage.data = STAR_DATA;    
+    Image starImage = {0};
+    starImage.width = STAR_WIDTH;
+    starImage.height = STAR_HEIGHT;
+    starImage.mipmaps = 1;
+    starImage.format = STAR_FORMAT;
+    starImage.data = STAR_DATA;
 
     starTexture = LoadTextureFromImage(starImage);
 }
@@ -38,10 +38,12 @@ void blockMain::Draw()
     int startY = (GetScreenHeight() - 20 * cellSz) / 2;
     for (Pos item : tile)
     {
-       if (cellId ==8)
+        if (cellId == 8)
         {
             DrawTexture(bombTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
-        }else if(cellId==9){
+        }
+        else if (cellId == 9)
+        {
             DrawTexture(starTexture, startX + item.y * cellSz, startY + item.x * cellSz, WHITE);
         }
         else
@@ -80,15 +82,18 @@ void blockMain::DrawAt(int x, int y)
     vector<Pos> tile = getCellPos();
     for (Pos item : tile)
     {
-                  if (cellId ==8) 
+        if (cellId == 8)
         {
             DrawTexture(bombTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
-        }else if(cellId==9){
-                 DrawTexture(starTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
         }
-        else{
-        DrawRectangle(x + item.y * cellSz + 1, y + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
-    }
+        else if (cellId == 9)
+        {
+            DrawTexture(starTexture, x + item.y * cellSz, y + item.x * cellSz, WHITE);
+        }
+        else
+        {
+            DrawRectangle(x + item.y * cellSz + 1, y + item.x * cellSz + 1, cellSz - 1, cellSz - 1, color[cellId]);
+        }
     }
 }
 
@@ -130,8 +135,9 @@ void blockMain::rotateUndo()
 
 void blockMain::resetPosition(int x, int y)
 {
-    x = (GetScreenWidth() - 10 * cellSz) / 2;
-    y = (GetScreenHeight() - 20 * cellSz) / 2;
+    offsetX = x;
+    offsetY = y;
+    rotatePos = 0;
 }
 
 //     vector<Pos> tile = getCellPos();

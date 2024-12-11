@@ -3,7 +3,6 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
-#include "C:\raylib\raylib\src\raylib.h"
 #include <deque>
 #include <iostream>
 #include <algorithm>
@@ -63,6 +62,8 @@ gameHandler::gameHandler()
     canHoldPiece = true;
 
     updateGhostBlock(); // Initialize ghost block
+
+    flippedBoard = false; // Flag to track if the board has been flipped
 }
 
 gameHandler::~gameHandler()
@@ -74,17 +75,12 @@ gameHandler::~gameHandler()
 void gameHandler::drawGame()
 {
     board.drawBoard();
-
-    if (nextBlocks.empty())
-    {
-        std::cout << "queue empty" << endl;
-    }
     currBlock.Draw();
+
     // Draw ghost block with a translucent color
     Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
     ghostBlock.Draw(ghostColor);
 
-    currBlock.Draw();
     int nextBlockX = GetScreenWidth() - 250;
     int nextBlockY = 100;
     switch (nextBlock.cellId)
@@ -127,8 +123,21 @@ void gameHandler::drawGame()
         thirdBlock.DrawAt(thirdBlockX, thirdBlockY);
     }
 
+    int heldBlockX = GetScreenWidth() - 730;
+    int heldBlockY = 100;
+    switch (heldBlock.cellId)
+    {
+    case 3:
+        heldBlock.DrawAt(heldBlockX - 5, heldBlockY + 5);
+        break;
+    case 6:
+        heldBlock.DrawAt(heldBlockX - 5, heldBlockY + 10);
+        break;
+    default:
+        heldBlock.DrawAt(heldBlockX, heldBlockY);
+    }
+
     Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf"); // Ensure you provide a valid font path
-    DrawTextEx(font, ((getBlockName(heldBlock.cellId)).c_str()), {static_cast<float>(GetScreenWidth() - 745), 100}, 30, 5, white);
     if (checkGameOver)
     {
         UpdateHighScore(score);
@@ -136,6 +145,25 @@ void gameHandler::drawGame()
         DrawTextEx(font, "Game Over", {static_cast<float>(GetScreenWidth() / 2 - 150), static_cast<float>(GetScreenHeight() / 2 - 50)}, 60, 5, RED);
         DrawTextEx(font, "Press ENTER to Play Again", {static_cast<float>(GetScreenWidth() / 2 - 280), static_cast<float>(GetScreenHeight() / 2 + 100)}, 40, 5, YELLOW);
         StopMusicStream(music);
+    }
+
+    // Alert if the board was flipped
+    if (flippedBoard)
+    {
+        flippedMessageTime = GetTime(); // Start the timer when the message appears
+        displayFlippedMessage = true;   // Set the flag to display the message
+        flippedBoard = false;           // Reset the flag after drawing the message
+    }
+
+    // Show the flipped message for 3 seconds
+    if (displayFlippedMessage && GetTime() - flippedMessageTime < 1.0f)
+    {
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(GRAY, 0.1f));
+        DrawTextEx(font, "Board Flipped!", {static_cast<float>(GetScreenWidth() / 2 - 150), static_cast<float>(GetScreenHeight() / 2)}, 40, 5, ORANGE);
+    }
+    else
+    {
+        displayFlippedMessage = false; // Stop showing the message after 3 seconds
     }
 }
 
@@ -251,14 +279,9 @@ vector<blockMain> gameHandler::refreshBlocks()
 
 void gameHandler::holdPiece()
 {
-    if (!checkHoldPiece)
-    {
-        heldBlock = currBlock;
-        currBlock = nextBlock;
-        nextBlock = getNextBlock();
-        currBlock.resetPosition(0, 0);
-        checkHoldPiece = true;
-    }
+    if (!canHoldPiece)
+        return;
+
     if (!checkHoldPiece)
     {
         // First time holding a piece
@@ -273,6 +296,7 @@ void gameHandler::holdPiece()
         swap(currBlock, heldBlock);
     }
 
+    heldBlock.resetPosition(0, 0);
     currBlock.resetPosition(0, 0); // Reset the position of the new current block
     canHoldPiece = false;          // Disable holding until the next block is placed
 }
@@ -297,38 +321,34 @@ void gameHandler::inputHandler()
     {
         moveLeft();
         lastMoveTime = currentTime;
-        updateGhostBlock();
     }
     if (IsKeyDown(KEY_RIGHT) && (currentTime - lastMoveTime > moveDelay))
     {
         moveRight();
         lastMoveTime = currentTime;
-        updateGhostBlock();
     }
     if (IsKeyDown(KEY_DOWN) && (currentTime - lastMoveTime > moveDelay))
     {
         moveDown();
         lastMoveTime = currentTime;
-        updateGhostBlock();
     }
 
     // Actions triggered by single press
     if (IsKeyPressed(KEY_UP))
     {
         rotateBlock();
-        updateGhostBlock();
     }
     if (IsKeyPressed(KEY_SPACE))
     {
         fastDrop();
-        updateGhostBlock();
     }
-    if (IsKeyPressed(KEY_C) && !canHoldPiece)
+    if (IsKeyPressed(KEY_C) && canHoldPiece)
     {
         holdPiece();
-        canHoldPiece = true;
+        canHoldPiece = false;
     }
 
+    updateGhostBlock();
     // Uncomment if you want to use backspace to exit the game
     // if (IsKeyPressed(KEY_BACKSPACE)) {
     //     CloseWindow();
@@ -342,9 +362,10 @@ void gameHandler::updateGame()
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
     heldBlockBool = true;
-    if (score % 800 == 0 && score > 0) 
+    if (score % 800 == 0 && score > 0)
     {
-        if (moveDownDelay > 0.1f) { // Ensure it doesn't go below 0.1 seconds
+        if (moveDownDelay > 0.1f)
+        {                           // Ensure it doesn't go below 0.1 seconds
             moveDownDelay -= 0.05f; // Decrease delay by 0.05 seconds
         }
     }
@@ -451,19 +472,20 @@ void gameHandler::lockBlock()
     for (Pos item : tile)
     {
         board.board[item.x][item.y] = currBlock.cellId;
-     }
-        if (currBlock.cellId == 8) 
+    }
+    if (currBlock.cellId == 8)
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
         board.clear3x3Block(bombX, bombY); // Clear the surrounding 3x3 area
-        PlaySound(dropFx); // Play the sound for bomb drop
-    }  else if (currBlock.cellId == 9) 
+        PlaySound(dropFx);                 // Play the sound for bomb drop
+    }
+    else if (currBlock.cellId == 9)
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
-        board.populate3x3Block(bombX, bombY,10); // Clear the surrounding 3x3 area
-        PlaySound(dropFx); // Play the sound for bomb drop
+        board.populate3x3Block(bombX, bombY, 10); // Clear the surrounding 3x3 area
+        PlaySound(dropFx);                        // Play the sound for bomb drop
     }
     currBlock = nextBlock;
     if (checkCollision() == false)
@@ -481,8 +503,10 @@ void gameHandler::lockBlock()
     {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
-        if (linesCleared >= 4) {
+        if (linesCleared >= 4)
+        {
             reverseBoard();
+            flippedBoard = true; // Mark that the board has been flipped
         }
     }
 
@@ -493,12 +517,14 @@ void gameHandler::lockBlock()
 
 void gameHandler::reverseBoard()
 {
-    int rows = board.getRows(); 
-    int cols = board.getCols(); 
+    int rows = board.getRows();
+    int cols = board.getCols();
 
     // Reverse the board
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols / 2; ++j) {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols / 2; ++j)
+        {
             std::swap(board.board[i][j], board.board[i][cols - j - 1]);
         }
     }
@@ -510,7 +536,7 @@ void gameHandler::updateGhostBlock()
     while (true)
     {
         ghostBlock.Move(1, 0); // Move down
-        if (checkBounds() || !checkCollision(ghostBlock))
+        if (checkBounds(ghostBlock) || !checkCollision(ghostBlock))
         {
             ghostBlock.Move(-1, 0); // Undo move
             break;
@@ -539,6 +565,19 @@ bool gameHandler::checkCollision()
 bool gameHandler::checkBounds()
 {
     vector<Pos> tile = currBlock.getCellPos();
+    for (Pos item : tile)
+    {
+        if (board.checkBounds(item.x, item.y))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool gameHandler::checkBounds(blockMain block)
+{
+    vector<Pos> tile = block.getCellPos();
     for (Pos item : tile)
     {
         if (board.checkBounds(item.x, item.y))
@@ -590,14 +629,16 @@ void gameHandler::updateScore(int linesCleared)
 void gameHandler::LoadHighScore()
 {
     std::ifstream scoreFile("highscore.txt");
-    if (!scoreFile.is_open()) {
+    if (!scoreFile.is_open())
+    {
         // If the file doesn't exist, create it with a default value of 0
         std::ofstream createFile("highscore.txt");
-        createFile << "0";  // Initialize high score to 0
+        createFile << "0"; // Initialize high score to 0
         createFile.close();
         highScore = 0;
     }
-    else {
+    else
+    {
         // Read the high score from the file
         scoreFile >> highScore;
         scoreFile.close();
@@ -607,13 +648,17 @@ void gameHandler::LoadHighScore()
 // Save the high score to the file
 void gameHandler::UpdateHighScore(int score)
 {
-    if (score > highScore) {
-        highScore = score;  // Update the high score
+    if (score > highScore)
+    {
+        highScore = score; // Update the high score
         std::ofstream scoreFile("highscore.txt");
-        if (scoreFile.is_open()) {
-            scoreFile << highScore;  // Save the new high score
+        if (scoreFile.is_open())
+        {
+            scoreFile << highScore; // Save the new high score
             scoreFile.close();
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Could not write to highscore.txt\n";
         }
     }

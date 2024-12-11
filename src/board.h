@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\raylib\raylib\src\raylib.h"
+#include <raylib.h>
 #include <vector>
 
 using namespace std;
@@ -19,6 +19,7 @@ public:
     void populate3x3Block(int startX, int startY, int value);
     int getRows();
     int getCols();
+
 private:
     bool checkLine(int x);
     void clearLine(int x);
