@@ -3,7 +3,6 @@
 #include <random>
 #include <stdlib.h>
 #include <cstring>
-#include "C:\raylib\raylib\src\raylib.h"
 #include <deque>
 #include <iostream>
 #include <algorithm>
@@ -342,9 +341,10 @@ void gameHandler::updateGame()
     lastFrameTime = currentTime;
     moveDownTimer += deltaTime;
     heldBlockBool = true;
-    if (score % 800 == 0 && score > 0) 
+    if (score % 800 == 0 && score > 0)
     {
-        if (moveDownDelay > 0.1f) { // Ensure it doesn't go below 0.1 seconds
+        if (moveDownDelay > 0.1f)
+        {                           // Ensure it doesn't go below 0.1 seconds
             moveDownDelay -= 0.05f; // Decrease delay by 0.05 seconds
         }
     }
@@ -451,19 +451,20 @@ void gameHandler::lockBlock()
     for (Pos item : tile)
     {
         board.board[item.x][item.y] = currBlock.cellId;
-     }
-        if (currBlock.cellId == 8) 
+    }
+    if (currBlock.cellId == 8)
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
         board.clear3x3Block(bombX, bombY); // Clear the surrounding 3x3 area
-        PlaySound(dropFx); // Play the sound for bomb drop
-    }  else if (currBlock.cellId == 9) 
+        PlaySound(dropFx);                 // Play the sound for bomb drop
+    }
+    else if (currBlock.cellId == 9)
     {
         int bombX = tile[0].x; // Assuming all positions in the bomb block are the same
         int bombY = tile[0].y;
-        board.populate3x3Block(bombX, bombY,10); // Clear the surrounding 3x3 area
-        PlaySound(dropFx); // Play the sound for bomb drop
+        board.populate3x3Block(bombX, bombY, 10); // Clear the surrounding 3x3 area
+        PlaySound(dropFx);                        // Play the sound for bomb drop
     }
     currBlock = nextBlock;
     if (checkCollision() == false)
@@ -481,7 +482,8 @@ void gameHandler::lockBlock()
     {
         PlaySound(clearLineFx);
         updateScore(linesCleared);
-        if (linesCleared >= 4) {
+        if (linesCleared >= 4)
+        {
             reverseBoard();
         }
     }
@@ -493,12 +495,14 @@ void gameHandler::lockBlock()
 
 void gameHandler::reverseBoard()
 {
-    int rows = board.getRows(); 
-    int cols = board.getCols(); 
+    int rows = board.getRows();
+    int cols = board.getCols();
 
     // Reverse the board
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols / 2; ++j) {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols / 2; ++j)
+        {
             std::swap(board.board[i][j], board.board[i][cols - j - 1]);
         }
     }
@@ -590,14 +594,16 @@ void gameHandler::updateScore(int linesCleared)
 void gameHandler::LoadHighScore()
 {
     std::ifstream scoreFile("highscore.txt");
-    if (!scoreFile.is_open()) {
+    if (!scoreFile.is_open())
+    {
         // If the file doesn't exist, create it with a default value of 0
         std::ofstream createFile("highscore.txt");
-        createFile << "0";  // Initialize high score to 0
+        createFile << "0"; // Initialize high score to 0
         createFile.close();
         highScore = 0;
     }
-    else {
+    else
+    {
         // Read the high score from the file
         scoreFile >> highScore;
         scoreFile.close();
@@ -607,13 +613,17 @@ void gameHandler::LoadHighScore()
 // Save the high score to the file
 void gameHandler::UpdateHighScore(int score)
 {
-    if (score > highScore) {
-        highScore = score;  // Update the high score
+    if (score > highScore)
+    {
+        highScore = score; // Update the high score
         std::ofstream scoreFile("highscore.txt");
-        if (scoreFile.is_open()) {
-            scoreFile << highScore;  // Save the new high score
+        if (scoreFile.is_open())
+        {
+            scoreFile << highScore; // Save the new high score
             scoreFile.close();
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Could not write to highscore.txt\n";
         }
     }
