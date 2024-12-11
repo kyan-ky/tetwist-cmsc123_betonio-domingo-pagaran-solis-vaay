@@ -6,5 +6,5 @@ tet
 src/tet
 src/tetwist
 
-*.txt
-src/*.txt
+highscore.txt
+src/highscore.txt

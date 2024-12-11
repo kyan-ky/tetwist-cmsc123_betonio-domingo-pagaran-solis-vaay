@@ -37,13 +37,14 @@ public:
     void UpdateHighScore(int);
 
 private:
-    bool checkBounds();
     void Reset();
     void updateScore(int linesCleared);
     void rotateBlock();
     void fastDrop();
     void lockBlock();
     bool checkCollision();
+    bool checkBounds();
+    bool checkBounds(blockMain block);
     vector<blockMain> blockSub;
     deque<blockMain> nextBlocks;
     blockMain currBlock;
@@ -68,4 +69,8 @@ private:
     bool canHoldPiece;
     void reverseBoard();
     bool heldBlockBool;
+
+    bool flippedBoard;
+    float flippedMessageTime = 0.0f;    // Time when the flipped message is displayed
+    bool displayFlippedMessage = false; // Flag to control message display
 };

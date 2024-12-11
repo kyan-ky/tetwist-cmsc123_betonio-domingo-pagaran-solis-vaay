@@ -1,6 +1,5 @@
 #include "gameHandler.h"
 
-
 int main()
 {
     Color bgBlack = Color{53, 56, 57, 255};
@@ -24,13 +23,13 @@ int main()
     Texture2D gif = LoadTexture("tetris.gif");
     gameHandler game = gameHandler();
 
- 
     float scrollingMountainFar = 0.0f;
     float scrollingMountainNear = 0.0f;
     float scrollingDarkTrees = 0.0f;
     float scrollingForegroundTrees = 0.0f;
 
-    enum ScreenState{
+    enum ScreenState
+    {
         MAIN_MENU,
         MECHANICS_SCREEN
     };
@@ -51,73 +50,71 @@ int main()
 
         DrawTexturePro(bgMenu, sourceRect, destRect, origin, 0.0f, WHITE);
 
-
-        if(currentScreen == MAIN_MENU){
+        if (currentScreen == MAIN_MENU)
+        {
             float scaleX = (float)screenWidth / logo.width;
             float scaleY = (float)screenHeight / logo.height;
-            float scale = scaleX < scaleY ? scaleX : scaleY;  
+            float scale = scaleX < scaleY ? scaleX : scaleY;
 
             Rectangle dest = {
-                screenWidth / 2.0f - (logo.width * scale) / 2.0f, 
-                0,                        
-                logo.width * scale,     
-                logo.height * scale  
-            };    
+                screenWidth / 2.0f - (logo.width * scale) / 2.0f,
+                0,
+                logo.width * scale,
+                logo.height * scale};
 
             float textVerticalOffset = dest.height + 20;
 
             std::string highScoreText = "High Score: " + std::to_string(game.highScore);
             DrawTextEx(font, highScoreText.c_str(), {screenWidth / 2.0f - MeasureText(highScoreText.c_str(), 30) / 2, screenHeight - 50}, 30, 2, YELLOW);
 
-
-
             Rectangle src = {0, 0, (float)logo.width, (float)logo.height};
             Vector2 origin = {0, 0};
             DrawTexturePro(logo, src, dest, origin, 0.0f, WHITE);
 
-            std::vector<std::string> menuOptions = {"Play","Mechanics", "Quit"};
+            std::vector<std::string> menuOptions = {"Play", "Mechanics", "Quit"};
 
             if (IsKeyPressed(KEY_DOWN))
             {
-                selectedOption = (selectedOption + 1) % menuOptions.size();  
+                selectedOption = (selectedOption + 1) % menuOptions.size();
             }
             if (IsKeyPressed(KEY_UP))
             {
-                selectedOption = (selectedOption - 1 + menuOptions.size()) % menuOptions.size(); 
+                selectedOption = (selectedOption - 1 + menuOptions.size()) % menuOptions.size();
             }
 
             for (size_t i = 0; i < menuOptions.size(); ++i)
             {
-                std::string displayText = (i == selectedOption) 
-                    ? ">> " + menuOptions[i] + " <<"
-                    : menuOptions[i];  
+                std::string displayText = (i == selectedOption)
+                                              ? ">> " + menuOptions[i] + " <<"
+                                              : menuOptions[i];
 
-                Color color = (i == selectedOption) ? YELLOW : GRAY; 
-                DrawTextEx(font, displayText.c_str(), 
-                        {static_cast<float>(screenWidth / 2 - MeasureText(displayText.c_str(), 40) / 2), 
-                            static_cast<float>(textVerticalOffset + i * 50)}, 
-                        40, 2, color);
+                Color color = (i == selectedOption) ? YELLOW : GRAY;
+                DrawTextEx(font, displayText.c_str(),
+                           {static_cast<float>(screenWidth / 2 - MeasureText(displayText.c_str(), 40) / 2),
+                            static_cast<float>(textVerticalOffset + i * 50)},
+                           40, 2, color);
             }
 
-            if (IsKeyPressed(KEY_ENTER)) 
+            if (IsKeyPressed(KEY_ENTER))
             {
-                if (selectedOption == 0)  
+                if (selectedOption == 0)
                 {
                     titleScreenDisplayed = true;
                 }
-                else if (selectedOption == 1) 
+                else if (selectedOption == 1)
                 {
-                    currentScreen = MECHANICS_SCREEN; 
+                    currentScreen = MECHANICS_SCREEN;
                 }
-                else if (selectedOption == 2){
+                else if (selectedOption == 2)
+                {
                     CloseWindow();
                     return 0;
                 }
             }
-
         }
 
-        else if( currentScreen == MECHANICS_SCREEN){
+        else if (currentScreen == MECHANICS_SCREEN)
+        {
             DrawTextEx(font, "How to Play", {225, 60}, 50, 10, WHITE);
             DrawTextEx(font, "ARROW KEYS", {270, 160}, 25, 10, WHITE);
             DrawTextEx(font, "[UP] - Rotate Block", {200, 200}, 18, 10, WHITE);
@@ -131,14 +128,13 @@ int main()
             DrawTextEx(font, "BOMB - occuppies a single cell and clears all \n      blocks in the 8 surrounding cells\n      when triggered.", {20, 460}, 18, 10, WHITE);
             DrawTextEx(font, "STAR - occuppies a single cell and fills all \n      blocks in the 8 surrounding cells\n      when triggered.", {20, 520}, 18, 10, WHITE);
             DrawTextEx(font, "4-LINE CLEAR - Clearing four lines flips \n      the entire board horizontally.", {20, 580}, 18, 10, WHITE);
-            
 
             DrawTextEx(font, "[SPACE] Main Menu",
-                    {screenWidth - 250, screenHeight - 50}, 15, 5, YELLOW);
+                       {screenWidth - 250, screenHeight - 50}, 15, 5, YELLOW);
 
             if (IsKeyPressed(KEY_SPACE))
             {
-                currentScreen = MAIN_MENU;  
+                currentScreen = MAIN_MENU;
             }
         }
 
@@ -147,7 +143,7 @@ int main()
             CloseWindow();
             return 0;
         }
-        
+
         EndDrawing();
     }
 
@@ -173,32 +169,33 @@ int main()
         scrollingDarkTrees -= 0.9f;
         scrollingForegroundTrees -= 1.0f;
 
-        if(scrollingMountainFar <= -bgmountainFar.width*2) scrollingMountainFar = 0;
-        if(scrollingMountainNear <= -bgmountainNear.width*2) scrollingMountainNear = 0;
-        if(scrollingDarkTrees <= -bgDarkTrees.width*2) scrollingDarkTrees = 0;
-        if(scrollingForegroundTrees <= -bgFgTrees.width*2) scrollingForegroundTrees = 0;
-
-
+        if (scrollingMountainFar <= -bgmountainFar.width * 2)
+            scrollingMountainFar = 0;
+        if (scrollingMountainNear <= -bgmountainNear.width * 2)
+            scrollingMountainNear = 0;
+        if (scrollingDarkTrees <= -bgDarkTrees.width * 2)
+            scrollingDarkTrees = 0;
+        if (scrollingForegroundTrees <= -bgFgTrees.width * 2)
+            scrollingForegroundTrees = 0;
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
-       
+
         DrawTextureEx(bgMoon, (Vector2){(float)bgMoon.width - 280, 10}, 0.0f, 4.0f, WHITE);
         DrawTextureEx(bgmountainFar, (Vector2){scrollingMountainFar, 20}, 0.0f, 4.0f, WHITE);
-        DrawTextureEx(bgmountainFar, (Vector2){scrollingMountainFar + bgmountainFar.width*2, 20}, 0.0f, 4.0f, WHITE);
-        
+        DrawTextureEx(bgmountainFar, (Vector2){scrollingMountainFar + bgmountainFar.width * 2, 20}, 0.0f, 4.0f, WHITE);
+
         DrawTextureEx(bgmountainNear, (Vector2){scrollingMountainNear, 40}, 0.0f, 4.0f, WHITE);
-        DrawTextureEx(bgmountainNear, (Vector2){scrollingMountainNear + bgmountainNear.width*2, 40}, 0.0f, 4.0f, WHITE);
+        DrawTextureEx(bgmountainNear, (Vector2){scrollingMountainNear + bgmountainNear.width * 2, 40}, 0.0f, 4.0f, WHITE);
 
         DrawTextureEx(bgDarkTrees, (Vector2){scrollingDarkTrees, 60}, 0.0f, 4.0f, WHITE);
-        DrawTextureEx(bgDarkTrees, (Vector2){scrollingDarkTrees + bgDarkTrees.width*2, 60}, 0.0f, 4.0f, WHITE);
+        DrawTextureEx(bgDarkTrees, (Vector2){scrollingDarkTrees + bgDarkTrees.width * 2, 60}, 0.0f, 4.0f, WHITE);
 
         DrawTextureEx(bgFgTrees, (Vector2){scrollingForegroundTrees, 60}, 0.0f, 4.0f, WHITE);
-        DrawTextureEx(bgFgTrees, (Vector2){scrollingForegroundTrees + bgFgTrees.width*2, 60}, 0.0f, 4.0f, WHITE);
+        DrawTextureEx(bgFgTrees, (Vector2){scrollingForegroundTrees + bgFgTrees.width * 2, 60}, 0.0f, 4.0f, WHITE);
 
-        //DrawTextureEx(bgTexture, (Vector2){bgX, 0.0f}, 0.0f, scaleX, WHITE);
-        //DrawTextureEx(bgTexture, (Vector2){bgX + bgTexture.width * scaleX, 0.0f}, 0.0f, scaleX, WHITE);
-
+        // DrawTextureEx(bgTexture, (Vector2){bgX, 0.0f}, 0.0f, scaleX, WHITE);
+        // DrawTextureEx(bgTexture, (Vector2){bgX + bgTexture.width * scaleX, 0.0f}, 0.0f, scaleX, WHITE);
 
         Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
         DrawRectangle(GetScreenWidth() - 200, 70, 160, 120, black);
@@ -209,17 +206,9 @@ int main()
         DrawRectangle(GetScreenWidth() - 220, 580, 200, 100, black);
         DrawTextEx(font, "Score", {static_cast<float>(GetScreenWidth() - 210), 500}, 60, 5, white);
         DrawTextEx(font, to_string(game.score).c_str(), {static_cast<float>(GetScreenWidth() - 200), 590}, 50, 5, white);
-        DrawRectangle(GetScreenWidth() - 780, 75, 200, 75, black);
+        DrawRectangle(GetScreenWidth() - 760, 75, 160, 120, black);
         DrawTextEx(font, "Hold", {static_cast<float>(GetScreenWidth() - 740), 15}, 45, 5, white);
-        DrawRectangle(GetScreenWidth() - 795, 275, 240, 230, black);
-        DrawTextEx(font, "How to Play", {static_cast<float>(GetScreenWidth() - 790), 240}, 30, 5, white);
-        DrawTextEx(font, "ARROW KEYS", {static_cast<float>(GetScreenWidth() - 790), 280}, 16, 5, white);
-        DrawTextEx(font, "UP-Rotate Block", {static_cast<float>(GetScreenWidth() - 790), 320}, 12, 5, white);
-        DrawTextEx(font, "LEFT-Move Block Left", {static_cast<float>(GetScreenWidth() - 790), 350}, 12, 5, white);
-        DrawTextEx(font, "RIGHT-Move Block Right", {static_cast<float>(GetScreenWidth() - 790), 380}, 12, 5, white);
-        DrawTextEx(font, "DOWN-Move Block Down", {static_cast<float>(GetScreenWidth() - 790), 410}, 12, 5, white);
-        DrawTextEx(font, "Space-Drop Block", {static_cast<float>(GetScreenWidth() - 790), 440}, 12, 5, white);
-        DrawTextEx(font, "C-Shift/Hold Block", {static_cast<float>(GetScreenWidth() - 790), 470}, 12, 5, white);
+
         game.drawGame();
         EndDrawing();
     }
@@ -231,7 +220,7 @@ int main()
     UnloadTexture(bgFgTrees);
     UnloadTexture(logo);
 
-    CloseWindow();  
+    CloseWindow();
 
     return 0;
 }
