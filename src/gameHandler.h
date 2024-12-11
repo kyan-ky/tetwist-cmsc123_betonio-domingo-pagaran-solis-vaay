@@ -55,7 +55,6 @@ private:
     blockMain secondBlock;
     blockMain thirdBlock;
     float moveDownTimer;
-    float moveDownDelay;
     float lastFrameTime;
     Sound clearLineFx;
     Sound moveFx;
@@ -73,4 +72,14 @@ private:
     bool flippedBoard;
     float flippedMessageTime = 0.0f;    // Time when the flipped message is displayed
     bool displayFlippedMessage = false; // Flag to control message display
+
+    float moveDownDelayEasy = 0.8f;   // Delay for 0 to 800
+    float moveDownDelayMedium = 0.7f;  // Delay for 800
+    float moveDownDelayMedium2 = 0.6f; // Delay for 1600
+    float moveDownDelayHard = 0.5f;    // Delay for 2400
+    float moveDownDelayHard2 = 0.4f;   // Delay for 3500
+    float moveDownDelayExtraHard = 0.2f; // Delay for 5000
+    float moveDownDelayExtreme = 0.1f; // Delay for 7000
+    float moveDownDelay;                // Current move down delay
+    int currentPhase;                    // Current phase (0: easy, 1: medium, 2: hard, 3: extra hard, 4: extreme)
 };

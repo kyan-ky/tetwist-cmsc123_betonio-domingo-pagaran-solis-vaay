@@ -3,7 +3,7 @@
 int main()
 {
     Color bgBlack = Color{53, 56, 57, 255};
-    Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
+    Font font = Font();
     const int screenWidth = 800;
     const int screenHeight = 700;
     bool titleScreenDisplayed = false;
@@ -197,7 +197,7 @@ int main()
         // DrawTextureEx(bgTexture, (Vector2){bgX, 0.0f}, 0.0f, scaleX, WHITE);
         // DrawTextureEx(bgTexture, (Vector2){bgX + bgTexture.width * scaleX, 0.0f}, 0.0f, scaleX, WHITE);
 
-        Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf");
+        Font font = Font();
         DrawRectangle(GetScreenWidth() - 200, 70, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 210, 160, 120, black);
         DrawRectangle(GetScreenWidth() - 200, 350, 160, 120, black);

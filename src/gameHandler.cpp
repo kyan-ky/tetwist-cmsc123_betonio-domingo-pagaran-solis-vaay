@@ -76,7 +76,7 @@ void gameHandler::drawGame()
 {
     board.drawBoard();
     currBlock.Draw();
-
+    // displayFlippedMessage = false;
     // Draw ghost block with a translucent color
     Color ghostColor = Fade(WHITE, 0.15f); // Adjust transparency as needed
     ghostBlock.Draw(ghostColor);
@@ -137,7 +137,7 @@ void gameHandler::drawGame()
         heldBlock.DrawAt(heldBlockX, heldBlockY);
     }
 
-    Font font = LoadFont("src/VCR_OSD_MONO_1.001.ttf"); // Ensure you provide a valid font path
+    Font font = Font(); // Ensure you provide a valid font path
     if (checkGameOver)
     {
         UpdateHighScore(score);
@@ -358,23 +358,48 @@ void gameHandler::inputHandler()
 void gameHandler::updateGame()
 {
     float currentTime = GetTime();
-    float deltaTime = currentTime - lastFrameTime;
-    lastFrameTime = currentTime;
-    moveDownTimer += deltaTime;
-    heldBlockBool = true;
-    if (score % 800 == 0 && score > 0)
-    {
-        if (moveDownDelay > 0.1f)
-        {                           // Ensure it doesn't go below 0.1 seconds
-            moveDownDelay -= 0.05f; // Decrease delay by 0.05 seconds
-        }
-    }
+    float deltaTime = currentTime - lastFrameTime; // Calculate the time since the last frame
+    lastFrameTime = currentTime; // Update the last frame time
+    moveDownTimer += deltaTime; // Increment the moveDownTimer by the time elapsed
+
+    // Check if it's time to move the block down
     if (moveDownTimer >= moveDownDelay)
     {
-        moveDown();
-        moveDownTimer = 0.0f;
+        moveDown(); // Move the block down
+        moveDownTimer = 0.0f; // Reset the timer
+        updateGhostBlock(); // Update the ghost block position
+    }
 
-        updateGhostBlock(); // Update ghost block position
+    // Adjust phase based on score
+    if (score >= 7000 && currentPhase < 4) // Switch to extreme phase
+    {
+        currentPhase = 4;
+        moveDownDelay = moveDownDelayExtreme; // Set delay for extreme phase
+    }
+    else if (score >= 5000 && currentPhase < 3) // Switch to extra hard phase
+    {
+        currentPhase = 3;
+        moveDownDelay = moveDownDelayExtraHard; // Set delay for extra hard phase
+    }
+    else if (score >= 3500 && currentPhase < 2) // Switch to hard phase 2
+    {
+        currentPhase = 2;
+        moveDownDelay = moveDownDelayHard2; // Set delay for hard phase 2
+    }
+    else if (score >= 2400 && currentPhase < 1) // Switch to hard phase
+    {
+        currentPhase = 1;
+        moveDownDelay = moveDownDelayHard; // Set delay for hard phase
+    }
+    else if (score >= 1600 && currentPhase < 0) // Switch to medium phase 2
+    {
+        currentPhase = 0;
+        moveDownDelay = moveDownDelayMedium2; // Set delay for medium phase 2
+    }
+    else if (score >= 800 && currentPhase < 0) // Switch to medium phase
+    {
+        currentPhase = 0;
+        moveDownDelay = moveDownDelayMedium; // Set delay for medium phase
     }
 }
 
