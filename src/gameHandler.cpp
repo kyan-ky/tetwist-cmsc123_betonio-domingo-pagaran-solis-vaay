@@ -330,24 +330,50 @@ void gameHandler::inputHandler()
 void gameHandler::updateGame()
 {
     float currentTime = GetTime();
-    float deltaTime = currentTime - lastFrameTime;
-    lastFrameTime = currentTime;
-    moveDownTimer += deltaTime;
+    float deltaTime = currentTime - lastFrameTime; // Calculate the time since the last frame
+    lastFrameTime = currentTime; // Update the last frame time
+    moveDownTimer += deltaTime; // Increment the moveDownTimer by the time elapsed
 
-    // Adjust moveDownDelay based on multiples of 800
-    if (score % 800 == 0 && score > 0) {
-        if (moveDownDelay > 0.1f) { 
-            moveDownDelay -= 0.05f; 
-        }
-    }
-
+    // Check if it's time to move the block down
     if (moveDownTimer >= moveDownDelay)
     {
-        moveDown();
-        moveDownTimer = 0.0f;
-
-        updateGhostBlock(); // Update ghost block position
+        moveDown(); // Move the block down
+        moveDownTimer = 0.0f; // Reset the timer
+        updateGhostBlock(); // Update the ghost block position
     }
+
+    // Adjust phase based on score
+    if (score >= 7000 && currentPhase < 4) // Switch to extreme phase
+    {
+        currentPhase = 4;
+        moveDownDelay = moveDownDelayExtreme; // Set delay for extreme phase
+    }
+    else if (score >= 5000 && currentPhase < 3) // Switch to extra hard phase
+    {
+        currentPhase = 3;
+        moveDownDelay = moveDownDelayExtraHard; // Set delay for extra hard phase
+    }
+    else if (score >= 3500 && currentPhase < 2) // Switch to hard phase 2
+    {
+        currentPhase = 2;
+        moveDownDelay = moveDownDelayHard2; // Set delay for hard phase 2
+    }
+    else if (score >= 2400 && currentPhase < 1) // Switch to hard phase
+    {
+        currentPhase = 1;
+        moveDownDelay = moveDownDelayHard; // Set delay for hard phase
+    }
+    else if (score >= 1600 && currentPhase < 0) // Switch to medium phase 2
+    {
+        currentPhase = 0;
+        moveDownDelay = moveDownDelayMedium2; // Set delay for medium phase 2
+    }
+    else if (score >= 800 && currentPhase < 0) // Switch to medium phase
+    {
+        currentPhase = 0;
+        moveDownDelay = moveDownDelayMedium; // Set delay for medium phase
+    }
+    // No need to change for 0 to 800, as it defaults to moveDownDelayEasy
 }
 
 void gameHandler::moveLeft()
