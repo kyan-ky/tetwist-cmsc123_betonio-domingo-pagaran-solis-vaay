@@ -252,17 +252,19 @@ vector<blockMain> gameHandler::refreshBlocks()
 
 void gameHandler::holdPiece()
 {
-    if (heldBlocks.size() < 2) {
+    if (heldBlocks.size() < 1) 
+    {
         // If there is space in the held blocks, add the current block
         heldBlocks.push(currBlock); // Store current block in heldBlocks
         currBlock = nextBlock; // Move next block to current
         nextBlock = getNextBlock(); // Get a new next block
-    } else {
-        // Swap the current block with the block at the front of the queue (heldBlock1)
-        blockMain temp = currBlock; // Store current block temporarily
-        currBlock = heldBlocks.front(); // Set current to heldBlock1
-        heldBlocks.pop(); // Remove heldBlock1 from the queue
-        heldBlocks.push(temp); // Add the previous current block to the back of the queue
+    } 
+    else 
+    {
+        blockMain temp = currBlock; // 
+        currBlock = heldBlocks.front(); 
+        heldBlocks.pop(); 
+        heldBlocks.push(temp); 
     }
 
     canHoldPiece = false; // Prevent holding again until the piece is placed
